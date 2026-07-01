@@ -59,13 +59,129 @@ function doPost(e) {
   }
 }
 
-// Permet de tester l'URL dans le navigateur (doit afficher un JSON "ok").
-function doGet() {
-  return json({ ok: true, service: 'quiz-ia-endpoint', ts: new Date().toISOString() });
+/**
+ * doGet :
+ *   - sans paramètre        -> petit JSON "ok" (test navigateur)
+ *   - ?action=stats         -> stats agrégées (JSON)
+ *   - &callback=maFonction  -> réponse en JSONP (contourne le CORS pour le tableau de bord)
+ */
+function doGet(e) {
+  var p = (e && e.parameter) ? e.parameter : {};
+  if (p.action === 'stats') {
+    return respond(computeStats(), p.callback);
+  }
+  return respond({ ok: true, service: 'quiz-ia-endpoint', ts: new Date().toISOString() }, p.callback);
+}
+
+// Renvoie du JSON, ou du JSONP si un callback est fourni.
+function respond(obj, callback) {
+  var body = JSON.stringify(obj);
+  if (callback) {
+    return ContentService
+      .createTextOutput(callback + '(' + body + ');')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+  return json(obj);
 }
 
 function json(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ---------------------------------------------------------------------------
+//  Calcul des statistiques agrégées (aucune donnée nominative renvoyée).
+// ---------------------------------------------------------------------------
+function computeStats() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(NOM_ONGLET);
+  if (!sheet || sheet.getLastRow() < 2) {
+    return { ok: true, participants: 0 };
+  }
+
+  var values = sheet.getDataRange().getValues();
+  var headers = values[0];
+  var rows = values.slice(1).filter(function (r) { return r.join('') !== ''; });
+  var col = function (name) { return headers.indexOf(name); };
+
+  var stats = {
+    ok: true,
+    participants: rows.length,
+    scores: {},
+    parQuestionOk: {},
+    profil: { role: {}, aisance: {}, frequence: {} },
+    usageIA: {}
+  };
+
+  // --- Scores (colonne "score") ---
+  var sIdx = col('score');
+  var scoreVals = [];
+  if (sIdx !== -1) {
+    rows.forEach(function (r) {
+      var v = Number(r[sIdx]);
+      if (!isNaN(v)) scoreVals.push(v);
+    });
+  }
+  scoreVals.sort(function (a, b) { return a - b; });
+  if (scoreVals.length) {
+    var sum = scoreVals.reduce(function (a, b) { return a + b; }, 0);
+    stats.scores = {
+      moyenne: sum / scoreVals.length,
+      min: scoreVals[0],
+      max: scoreVals[scoreVals.length - 1],
+      mediane: scoreVals[Math.floor((scoreVals.length - 1) / 2)],
+      total: (col('total') !== -1 && rows.length) ? Number(rows[0][col('total')]) : 20,
+      valeurs: scoreVals
+    };
+  }
+
+  // --- Taux de réussite par question (colonnes c*_ok) ---
+  headers.forEach(function (h) {
+    if (/^c\d+_ok$/.test(h)) {
+      var idx = col(h), tot = 0, ok = 0;
+      rows.forEach(function (r) {
+        var v = r[idx];
+        if (v === '' || v === null || v === undefined) return;
+        tot++;
+        if (Number(v) === 1) ok++;
+      });
+      if (tot) stats.parQuestionOk[h] = ok / tot;
+    }
+  });
+
+  // --- Profil (rôle / aisance / fréquence) ---
+  function tally(colName, target) {
+    var idx = col(colName);
+    if (idx === -1) return;
+    rows.forEach(function (r) {
+      var v = ('' + r[idx]).trim();
+      if (v === '') return;
+      target[v] = (target[v] || 0) + 1;
+    });
+  }
+  tally('role', stats.profil.role);
+  tally('aisance', stats.profil.aisance);
+  tally('frequence', stats.profil.frequence);
+
+  // --- Usage IA : on ré-éclate la colonne "inventaire" ---
+  // Format écrit par le site : "Outil → Accès ; Outil → Accès ; ..."
+  var invIdx = col('inventaire');
+  if (invIdx !== -1) {
+    rows.forEach(function (r) {
+      var s = '' + r[invIdx];
+      if (!s) return;
+      s.split(' ; ').forEach(function (pair) {
+        var parts = pair.split(' → '); // " → "
+        if (parts.length < 2) return;
+        var tool = parts[0].trim();
+        var acc = parts[1].trim();
+        if (acc === '' || acc === '—') return; // "—"
+        if (!stats.usageIA[tool]) stats.usageIA[tool] = {};
+        stats.usageIA[tool][acc] = (stats.usageIA[tool][acc] || 0) + 1;
+      });
+    });
+  }
+
+  return stats;
 }

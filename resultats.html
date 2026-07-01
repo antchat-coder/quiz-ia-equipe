@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Résultats — Quiz Niveau IA de l'équipe</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <main class="wrap wrap-dash">
+    <header class="hero">
+      <a class="back-link" href="index.html">← Revenir au quiz</a>
+      <h1>Tableau de bord — Niveau IA de l'équipe</h1>
+      <p class="sous-titre">Statistiques générales de l'équipe · mises à jour en direct</p>
+    </header>
+
+    <!-- États de chargement -->
+    <div id="loading" class="dash-info">Chargement des résultats…</div>
+    <div id="erreur" class="dash-info dash-erreur" hidden></div>
+    <div id="vide" class="dash-info" hidden>Aucune réponse enregistrée pour l'instant. Reviens ici une fois que l'équipe aura répondu 🙂</div>
+
+    <!-- Contenu (rempli par results.js) -->
+    <div id="dash" hidden>
+
+      <!-- KPIs -->
+      <section class="kpis" id="kpis"></section>
+
+      <!-- Résultats du test -->
+      <section class="dash-bloc">
+        <h2>🎯 Résultats du test</h2>
+        <div class="card">
+          <h3>Distribution des scores (/<span id="scoreTotal">20</span>)</h3>
+          <div id="scoreDist" class="bars"></div>
+        </div>
+        <div class="card">
+          <h3>Taux de réussite par question</h3>
+          <p class="card-aide">En rouge : les notions à retravailler en équipe.</p>
+          <div id="parQuestion" class="bars bars-q"></div>
+        </div>
+      </section>
+
+      <!-- Profil -->
+      <section class="dash-bloc">
+        <h2>👤 Profil de l'équipe</h2>
+        <div class="grid-cards">
+          <div class="card"><h3>Rôles</h3><div id="profRole" class="bars"></div></div>
+          <div class="card"><h3>Aisance ressentie (1→5)</h3><div id="profAisance" class="bars"></div></div>
+          <div class="card"><h3>Fréquence d'usage IA</h3><div id="profFrequence" class="bars"></div></div>
+        </div>
+      </section>
+
+      <!-- Usage / abonnements IA -->
+      <section class="dash-bloc">
+        <h2>🧰 Usage & abonnements IA</h2>
+        <div class="card">
+          <p class="card-aide">Nombre de personnes par outil et type d'accès.</p>
+          <div id="usageTable" class="usage-wrap"></div>
+        </div>
+      </section>
+
+      <p class="dash-footer">
+        <button id="refreshBtn" class="btn-secondary">↻ Actualiser</button>
+        <span id="maj" class="submit-state"></span>
+      </p>
+    </div>
+  </main>
+
+  <script src="js/quiz-data.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/results.js"></script>
+</body>
+</html>
