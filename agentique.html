@@ -144,12 +144,12 @@
     <a href="#worktrees"><span class="n">2</span>GitHub worktrees</a>
     <a href="#apprivoiser"><span class="n">3</span>Apprivoiser l'IA</a>
     <a href="#frontieres"><span class="n">4</span>Frontières entre postes</a>
-    <a href="#sadin"><span class="n">5</span>Eric Sadin — la critique</a>
-    <a href="#strategie"><span class="n">6</span>Réflexion stratégique</a>
-    <a href="#juniors"><span class="n">7</span>Former les juniors</a>
-    <a href="#societe"><span class="n">8</span>Enjeu de société & IA locale</a>
-    <a href="#outils"><span class="n">9</span>La différence des outils</a>
-    <a href="#pour-lia"><span class="n">10</span>Outils POUR l'IA vs rafistolage</a>
+    <a href="#juniors"><span class="n">5</span>Former les juniors</a>
+    <a href="#societe"><span class="n">6</span>Enjeu de société & IA locale</a>
+    <a href="#outils"><span class="n">7</span>La différence des outils</a>
+    <a href="#pour-lia"><span class="n">8</span>Outils POUR l'IA vs rafistolage</a>
+    <a href="#sadin"><span class="n">9</span>Eric Sadin — la critique</a>
+    <a href="#strategie"><span class="n">10</span>Réflexion stratégique</a>
   </nav>
 
   <main>
@@ -313,9 +313,129 @@ git worktree add ../recall-tests      test/upsert-unicite
       <p>Autrement dit : la valeur se déplace de <strong>l'exécution</strong> (écrire les lignes) vers <strong>le cadrage et le jugement</strong> (quoi construire, quels tests, quelle architecture, quelle qualité on accepte). Ce sont des compétences transférables — ce qui explique pourquoi les frontières entre postes bougent autant.</p>
     </section>
 
+    <!-- ===================== 9 — JUNIORS ===================== -->
+    <section id="juniors">
+      <h2><span class="num">5</span>Former les juniors quand l'IA fait leur travail</h2>
+      <p>Un angle mort dangereux. Le travail des juniors — le répétitif, le boilerplate, les tâches simples — est précisément ce que l'IA absorbe le mieux. D'où une question qui n'a rien de théorique.</p>
+
+      <div class="note bad">
+        <span class="t">Le paradoxe de la relève</span>
+        Si l'IA fait le travail des juniors, <strong>par où passe-t-on pour devenir senior ?</strong> Un senior s'est formé <em>en faisant</em> le travail simple, en se trompant, en lisant beaucoup de code. Supprimez cette marche, et vous cassez l'escalier : plus de juniors formés aujourd'hui = <strong>plus de seniors demain</strong> pour relire, arbitrer, et rattraper les erreurs de l'IA. À terme, plus personne d'humain avec le recul suffisant derrière la machine.
+      </div>
+
+      <h3>L'enjeu, posé nettement</h3>
+      <ul class="clean dot">
+        <li>Le savoir-faire se construit par <strong>la pratique</strong>, pas par la supervision d'une machine.</li>
+        <li>Un junior qui ne fait que valider ce que l'IA produit n'apprend pas à <strong>juger</strong> — il apprend à faire confiance.</li>
+        <li>Sans nouveaux seniors, la couche humaine de contrôle au-dessus de l'IA s'amincit, alors qu'elle devient plus critique.</li>
+        <li>C'est un risque <strong>collectif et différé</strong> : invisible à court terme, structurel à 5-10 ans.</li>
+      </ul>
+
+      <h3>Pistes</h3>
+      <ul class="clean pro">
+        <li>Faire des juniors ceux qui <strong>pilotent et critiquent</strong> l'IA tôt — mais sur des bases qu'ils ont vraiment comprises (leur faire faire, puis comparer avec l'IA).</li>
+        <li>Préserver des espaces d'apprentissage « à la main », même moins efficaces, comme un investissement de formation assumé.</li>
+        <li>Muscler ce qui ne s'automatise pas : lecture critique, architecture, tests, débogage de ce que l'IA a raté.</li>
+      </ul>
+    </section>
+
+    <!-- ===================== 10 — SOCIÉTÉ & IA LOCALE ===================== -->
+    <section id="societe">
+      <h2><span class="num">6</span>Un enjeu de société — et la responsabilité des devs</h2>
+      <p>Tout ce qui précède déborde très largement le développement logiciel. Le déplacement du travail, de la formation, du jugement, touche la société entière. Et les développeurs y ont une <strong>responsabilité particulière</strong> : ce sont eux qui choisissent, construisent et déploient ces systèmes.</p>
+
+      <h3>Pourquoi l'IA locale apparaît comme une réponse</h3>
+      <div class="grid c2">
+        <div class="card">
+          <h4>💶 Plus soutenable économiquement</h4>
+          <p class="muted">Les coûts des modèles « frontières » (les plus gros, propriétaires) explosent : entraînement, inférence, dépendance à quelques fournisseurs. Une IA <strong>locale</strong>, tournant sur son propre matériel, transforme une rente à l'usage en investissement amorti — et sort de la spirale de coûts incontrôlés.</p>
+        </div>
+        <div class="card">
+          <h4>🗳️ Plus démocratique</h4>
+          <p class="muted">Une IA locale ne dépend pas d'un acteur unique qui fixe les prix, les règles et ce qui est permis. Elle garde la donnée chez soi, rend l'accès indépendant du bon vouloir d'une plateforme, et redonne du contrôle aux organisations et aux personnes. Une réponse concrète à la critique de <a href="#sadin" class="inline">Sadin</a> sur le technolibéralisme.</p>
+        </div>
+      </div>
+
+      <div class="note good">
+        <span class="t">La responsabilité côté dev</span>
+        Choisir une IA locale, ouverte, contrôlable, n'est pas qu'une décision technique de coût ou de confidentialité — c'est un <strong>choix de société</strong> : moins de dépendance, plus de souveraineté, une empreinte et une gouvernance qu'on peut assumer. Les développeurs ne sont pas neutres dans ce choix. Voir le guide <a class="inline" href="ia-locale-rag.html">IA locale & RAG on-premise</a>.
+      </div>
+    </section>
+
+    <!-- ===================== 11 — DIFFÉRENCE DES OUTILS ===================== -->
+    <section id="outils">
+      <h2><span class="num">7</span>La différence énorme entre les outils</h2>
+      <p>« Utiliser l'IA pour coder » ne veut rien dire tant qu'on n'a pas précisé <strong>quel</strong> outil. L'écart entre eux est colossal : ce ne sont pas des variantes d'un même produit, mais des <strong>catégories différentes</strong>, avec des puissances et des philosophies opposées.</p>
+
+      <div class="tablewrap">
+      <table>
+        <thead><tr><th style="width:20%">Outil</th><th>Nature</th><th>Ce qu'il fait vraiment</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Copilot 365</strong></td>
+            <td><span class="pill blue">Assistant intégré</span></td>
+            <td>Un assistant greffé dans la suite bureautique (Word, Excel, Outlook, Teams). Il <strong>aide à produire des documents et des mails</strong>, résume, reformule. Précieux pour le travail de bureau — mais ce n'est pas un agent qui code et exécute dans un dépôt.</td>
+          </tr>
+          <tr>
+            <td><strong>GitHub Copilot</strong></td>
+            <td><span class="pill blue">Autocomplétion / chat</span></td>
+            <td>De l'<strong>autocomplétion de code</strong> dans l'éditeur + un chat. Il suggère la ligne ou le bloc suivant, répond à des questions. Très efficace pour accélérer la frappe, mais reste centré sur « t'aider pendant que <em>toi</em> tu codes ».</td>
+          </tr>
+          <tr>
+            <td><strong>Cursor</strong></td>
+            <td><span class="pill orange">Éditeur IA</span></td>
+            <td>Un éditeur (fork de VS Code) pensé autour de l'IA : édition multi-fichiers, compréhension du projet, mode agent intégré. Plus proche de l'agentique que Copilot, tout en restant dans un environnement d'édition.</td>
+          </tr>
+          <tr>
+            <td><strong>Claude Code</strong></td>
+            <td><span class="pill green">Agent</span></td>
+            <td>Un <strong>agent</strong> qui vit là où tu codes (terminal, IDE) : il lit le dépôt, modifie les fichiers, lance les commandes et <strong>boucle jusqu'au résultat</strong>. On ne l'assiste pas, on lui <strong>délègue</strong> une tâche et on relit le diff. C'est un changement de nature, pas de degré.</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="note">
+        <span class="t">Le point à faire passer</span>
+        Mettre « Copilot » et « Claude Code » dans la même phrase induit en erreur. L'un <strong>suggère pendant que tu écris</strong> ; l'autre <strong>fait et vérifie tout seul</strong> pendant que tu arbitres. Choisir son outil, c'est choisir son mode de travail — assistant, éditeur augmenté, ou vraie délégation agentique.
+      </div>
+    </section>
+
+    <!-- ===================== 12 — OUTILS POUR L'IA ===================== -->
+    <section id="pour-lia">
+      <h2><span class="num">8</span>Créer des outils <em>pour</em> l'IA vs rafistoler de vieux logiciels</h2>
+      <p>Dernière distinction, souvent invisible et pourtant déterminante. Quand on « branche un agent sur nos outils », il y a deux mondes très différents.</p>
+
+      <div class="grid c2">
+        <div class="card">
+          <h4 style="color:var(--good)">Concevoir des outils <em>pour</em> l'IA</h4>
+          <p class="muted">Des interfaces pensées dès le départ pour être appelées par un agent : contrats clairs, entrées/sorties structurées, erreurs explicites, opérations sûres et idempotentes. C'est l'esprit de <strong>MCP</strong> : exposer des capacités <em>faites pour</em> être orchestrées. L'agent est fiable parce que l'outil est fait pour lui.</p>
+          <ul class="clean pro">
+            <li>Actions atomiques, descriptibles en une phrase.</li>
+            <li>Sorties structurées, prévisibles, versionnées.</li>
+            <li>Erreurs lisibles par le modèle, garde-fous intégrés.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4 style="color:var(--warn)">Rafistoler un vieux logiciel</h4>
+          <p class="muted">Faire piloter par un agent une vieille application jamais prévue pour ça : cliquer dans une UI legacy, parser des sorties non structurées, contourner l'absence d'API. Ça <em>peut</em> marcher, mais c'est fragile, lent, et ça casse au moindre changement d'écran. On plaque de l'agentique sur un socle qui la refuse.</p>
+          <ul class="clean con">
+            <li>Interfaces instables, comportements implicites.</li>
+            <li>Aucune garantie, aucune reprise propre sur erreur.</li>
+            <li>Maintenance coûteuse à chaque évolution du legacy.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note">
+        <span class="t">La conséquence stratégique</span>
+        La vraie valeur ne vient pas de « brancher l'IA sur l'existant » à tout prix, mais de <strong>concevoir des capacités faites pour être orchestrées</strong>. Les organisations qui repensent leurs outils <em>pour</em> l'IA obtiendront des agents fiables ; celles qui se contentent de rafistoler auront des démos qui impressionnent et des systèmes qui cassent. C'est très différent — et ça se décide en amont.
+      </div>
+    </section>
+
     <!-- ===================== 7 — ERIC SADIN ===================== -->
     <section id="sadin">
-      <h2><span class="num">5</span>Eric Sadin — la critique à ne pas esquiver</h2>
+      <h2><span class="num">9</span>Eric Sadin — la critique à ne pas esquiver</h2>
       <p>Impossible de parler sérieusement d'IA au travail sans écouter ses critiques les plus tranchants. <strong>Éric Sadin</strong>, philosophe et essayiste français, est l'une des voix les plus radicales sur le sujet. On peut ne pas partager ses conclusions ; les ignorer serait naïf.</p>
 
       <h3>Sa pensée, en résumé</h3>
@@ -358,7 +478,7 @@ git worktree add ../recall-tests      test/upsert-unicite
 
     <!-- ===================== 8 — STRATÉGIE ===================== -->
     <section id="strategie">
-      <h2><span class="num">6</span>Réflexion stratégique — toujours un coup d'avance</h2>
+      <h2><span class="num">10</span>Réflexion stratégique — toujours un coup d'avance</h2>
       <p>Au-delà de la critique, savoir <strong>anticiper</strong> : où va l'IA, quels coups jouer, et comment garder l'initiative plutôt que de subir. L'idée directrice — <strong>toujours avoir un coup d'avance</strong>.</p>
 
       <div class="card">
@@ -386,126 +506,6 @@ git worktree add ../recall-tests      test/upsert-unicite
           <span class="toolchip">Instagram @samourai_dansant</span>
           <span class="toolchip">App DeepDialog</span>
         </div>
-      </div>
-    </section>
-
-    <!-- ===================== 9 — JUNIORS ===================== -->
-    <section id="juniors">
-      <h2><span class="num">7</span>Former les juniors quand l'IA fait leur travail</h2>
-      <p>Un angle mort dangereux. Le travail des juniors — le répétitif, le boilerplate, les tâches simples — est précisément ce que l'IA absorbe le mieux. D'où une question qui n'a rien de théorique.</p>
-
-      <div class="note bad">
-        <span class="t">Le paradoxe de la relève</span>
-        Si l'IA fait le travail des juniors, <strong>par où passe-t-on pour devenir senior ?</strong> Un senior s'est formé <em>en faisant</em> le travail simple, en se trompant, en lisant beaucoup de code. Supprimez cette marche, et vous cassez l'escalier : plus de juniors formés aujourd'hui = <strong>plus de seniors demain</strong> pour relire, arbitrer, et rattraper les erreurs de l'IA. À terme, plus personne d'humain avec le recul suffisant derrière la machine.
-      </div>
-
-      <h3>L'enjeu, posé nettement</h3>
-      <ul class="clean dot">
-        <li>Le savoir-faire se construit par <strong>la pratique</strong>, pas par la supervision d'une machine.</li>
-        <li>Un junior qui ne fait que valider ce que l'IA produit n'apprend pas à <strong>juger</strong> — il apprend à faire confiance.</li>
-        <li>Sans nouveaux seniors, la couche humaine de contrôle au-dessus de l'IA s'amincit, alors qu'elle devient plus critique.</li>
-        <li>C'est un risque <strong>collectif et différé</strong> : invisible à court terme, structurel à 5-10 ans.</li>
-      </ul>
-
-      <h3>Pistes</h3>
-      <ul class="clean pro">
-        <li>Faire des juniors ceux qui <strong>pilotent et critiquent</strong> l'IA tôt — mais sur des bases qu'ils ont vraiment comprises (leur faire faire, puis comparer avec l'IA).</li>
-        <li>Préserver des espaces d'apprentissage « à la main », même moins efficaces, comme un investissement de formation assumé.</li>
-        <li>Muscler ce qui ne s'automatise pas : lecture critique, architecture, tests, débogage de ce que l'IA a raté.</li>
-      </ul>
-    </section>
-
-    <!-- ===================== 10 — SOCIÉTÉ & IA LOCALE ===================== -->
-    <section id="societe">
-      <h2><span class="num">8</span>Un enjeu de société — et la responsabilité des devs</h2>
-      <p>Tout ce qui précède déborde très largement le développement logiciel. Le déplacement du travail, de la formation, du jugement, touche la société entière. Et les développeurs y ont une <strong>responsabilité particulière</strong> : ce sont eux qui choisissent, construisent et déploient ces systèmes.</p>
-
-      <h3>Pourquoi l'IA locale apparaît comme une réponse</h3>
-      <div class="grid c2">
-        <div class="card">
-          <h4>💶 Plus soutenable économiquement</h4>
-          <p class="muted">Les coûts des modèles « frontières » (les plus gros, propriétaires) explosent : entraînement, inférence, dépendance à quelques fournisseurs. Une IA <strong>locale</strong>, tournant sur son propre matériel, transforme une rente à l'usage en investissement amorti — et sort de la spirale de coûts incontrôlés.</p>
-        </div>
-        <div class="card">
-          <h4>🗳️ Plus démocratique</h4>
-          <p class="muted">Une IA locale ne dépend pas d'un acteur unique qui fixe les prix, les règles et ce qui est permis. Elle garde la donnée chez soi, rend l'accès indépendant du bon vouloir d'une plateforme, et redonne du contrôle aux organisations et aux personnes. Une réponse concrète à la critique de <a href="#sadin" class="inline">Sadin</a> sur le technolibéralisme.</p>
-        </div>
-      </div>
-
-      <div class="note good">
-        <span class="t">La responsabilité côté dev</span>
-        Choisir une IA locale, ouverte, contrôlable, n'est pas qu'une décision technique de coût ou de confidentialité — c'est un <strong>choix de société</strong> : moins de dépendance, plus de souveraineté, une empreinte et une gouvernance qu'on peut assumer. Les développeurs ne sont pas neutres dans ce choix. Voir le guide <a class="inline" href="ia-locale-rag.html">IA locale & RAG on-premise</a>.
-      </div>
-    </section>
-
-    <!-- ===================== 11 — DIFFÉRENCE DES OUTILS ===================== -->
-    <section id="outils">
-      <h2><span class="num">9</span>La différence énorme entre les outils</h2>
-      <p>« Utiliser l'IA pour coder » ne veut rien dire tant qu'on n'a pas précisé <strong>quel</strong> outil. L'écart entre eux est colossal : ce ne sont pas des variantes d'un même produit, mais des <strong>catégories différentes</strong>, avec des puissances et des philosophies opposées.</p>
-
-      <div class="tablewrap">
-      <table>
-        <thead><tr><th style="width:20%">Outil</th><th>Nature</th><th>Ce qu'il fait vraiment</th></tr></thead>
-        <tbody>
-          <tr>
-            <td><strong>Copilot 365</strong></td>
-            <td><span class="pill blue">Assistant intégré</span></td>
-            <td>Un assistant greffé dans la suite bureautique (Word, Excel, Outlook, Teams). Il <strong>aide à produire des documents et des mails</strong>, résume, reformule. Précieux pour le travail de bureau — mais ce n'est pas un agent qui code et exécute dans un dépôt.</td>
-          </tr>
-          <tr>
-            <td><strong>GitHub Copilot</strong></td>
-            <td><span class="pill blue">Autocomplétion / chat</span></td>
-            <td>De l'<strong>autocomplétion de code</strong> dans l'éditeur + un chat. Il suggère la ligne ou le bloc suivant, répond à des questions. Très efficace pour accélérer la frappe, mais reste centré sur « t'aider pendant que <em>toi</em> tu codes ».</td>
-          </tr>
-          <tr>
-            <td><strong>Cursor</strong></td>
-            <td><span class="pill orange">Éditeur IA</span></td>
-            <td>Un éditeur (fork de VS Code) pensé autour de l'IA : édition multi-fichiers, compréhension du projet, mode agent intégré. Plus proche de l'agentique que Copilot, tout en restant dans un environnement d'édition.</td>
-          </tr>
-          <tr>
-            <td><strong>Claude Code</strong></td>
-            <td><span class="pill green">Agent</span></td>
-            <td>Un <strong>agent</strong> qui vit là où tu codes (terminal, IDE) : il lit le dépôt, modifie les fichiers, lance les commandes et <strong>boucle jusqu'au résultat</strong>. On ne l'assiste pas, on lui <strong>délègue</strong> une tâche et on relit le diff. C'est un changement de nature, pas de degré.</td>
-          </tr>
-        </tbody>
-      </table>
-      </div>
-
-      <div class="note">
-        <span class="t">Le point à faire passer</span>
-        Mettre « Copilot » et « Claude Code » dans la même phrase induit en erreur. L'un <strong>suggère pendant que tu écris</strong> ; l'autre <strong>fait et vérifie tout seul</strong> pendant que tu arbitres. Choisir son outil, c'est choisir son mode de travail — assistant, éditeur augmenté, ou vraie délégation agentique.
-      </div>
-    </section>
-
-    <!-- ===================== 12 — OUTILS POUR L'IA ===================== -->
-    <section id="pour-lia">
-      <h2><span class="num">10</span>Créer des outils <em>pour</em> l'IA vs rafistoler de vieux logiciels</h2>
-      <p>Dernière distinction, souvent invisible et pourtant déterminante. Quand on « branche un agent sur nos outils », il y a deux mondes très différents.</p>
-
-      <div class="grid c2">
-        <div class="card">
-          <h4 style="color:var(--good)">Concevoir des outils <em>pour</em> l'IA</h4>
-          <p class="muted">Des interfaces pensées dès le départ pour être appelées par un agent : contrats clairs, entrées/sorties structurées, erreurs explicites, opérations sûres et idempotentes. C'est l'esprit de <strong>MCP</strong> : exposer des capacités <em>faites pour</em> être orchestrées. L'agent est fiable parce que l'outil est fait pour lui.</p>
-          <ul class="clean pro">
-            <li>Actions atomiques, descriptibles en une phrase.</li>
-            <li>Sorties structurées, prévisibles, versionnées.</li>
-            <li>Erreurs lisibles par le modèle, garde-fous intégrés.</li>
-          </ul>
-        </div>
-        <div class="card">
-          <h4 style="color:var(--warn)">Rafistoler un vieux logiciel</h4>
-          <p class="muted">Faire piloter par un agent une vieille application jamais prévue pour ça : cliquer dans une UI legacy, parser des sorties non structurées, contourner l'absence d'API. Ça <em>peut</em> marcher, mais c'est fragile, lent, et ça casse au moindre changement d'écran. On plaque de l'agentique sur un socle qui la refuse.</p>
-          <ul class="clean con">
-            <li>Interfaces instables, comportements implicites.</li>
-            <li>Aucune garantie, aucune reprise propre sur erreur.</li>
-            <li>Maintenance coûteuse à chaque évolution du legacy.</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="note">
-        <span class="t">La conséquence stratégique</span>
-        La vraie valeur ne vient pas de « brancher l'IA sur l'existant » à tout prix, mais de <strong>concevoir des capacités faites pour être orchestrées</strong>. Les organisations qui repensent leurs outils <em>pour</em> l'IA obtiendront des agents fiables ; celles qui se contentent de rafistoler auront des démos qui impressionnent et des systèmes qui cassent. C'est très différent — et ça se décide en amont.
       </div>
     </section>
 
