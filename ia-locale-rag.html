@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IA locale & RAG on-premise — Guide pratique pour devs</title>
+<style>
+  :root{
+    --bg:#0d1117; --bg2:#161b22; --bg3:#1c2230; --card:#161b22;
+    --border:#283040; --txt:#e6edf3; --muted:#9aa7b8; --accent:#58a6ff;
+    --accent2:#7ee787; --warn:#f0883e; --bad:#ff7b72; --good:#3fb950;
+    --code:#1f2733;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65;font-size:16px;
+  }
+  .layout{display:flex;max-width:1280px;margin:0 auto}
+  /* Sidebar */
+  nav.side{
+    position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;
+    width:260px;flex-shrink:0;padding:28px 18px;border-right:1px solid var(--border);
+    background:var(--bg2);
+  }
+  nav.side .brand{font-weight:800;font-size:1.05rem;letter-spacing:.3px;margin-bottom:4px}
+  nav.side .brand span{color:var(--accent)}
+  nav.side .sub{color:var(--muted);font-size:.78rem;margin-bottom:22px}
+  nav.side a{
+    display:block;color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:8px;
+    font-size:.9rem;margin-bottom:2px;border-left:2px solid transparent;
+  }
+  nav.side a:hover{background:var(--bg3);color:var(--txt)}
+  nav.side a .n{color:var(--accent);font-variant-numeric:tabular-nums;margin-right:8px;font-size:.8rem}
+  /* Main */
+  main{flex:1;min-width:0;padding:48px 56px 120px}
+  header.hero{margin-bottom:54px}
+  header.hero h1{font-size:2.3rem;line-height:1.15;margin:0 0 14px;font-weight:800}
+  header.hero h1 span{color:var(--accent)}
+  header.hero p.lead{color:var(--muted);font-size:1.08rem;max-width:760px;margin:0}
+  .tagline{display:inline-block;background:var(--bg3);border:1px solid var(--border);
+    color:var(--accent2);font-size:.74rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+    padding:5px 12px;border-radius:999px;margin-bottom:18px}
+  section{margin-bottom:64px;scroll-margin-top:24px}
+  section h2{font-size:1.6rem;margin:0 0 6px;padding-bottom:10px;border-bottom:1px solid var(--border);font-weight:800}
+  section h2 .num{color:var(--accent);font-size:1.1rem;margin-right:10px;font-variant-numeric:tabular-nums}
+  section h3{font-size:1.18rem;margin:32px 0 10px;font-weight:700;color:var(--txt)}
+  section h4{font-size:1rem;margin:22px 0 6px;font-weight:700;color:var(--accent2)}
+  p{margin:0 0 14px}
+  .muted{color:var(--muted)}
+  strong{color:#fff}
+  code{background:var(--code);padding:2px 6px;border-radius:5px;font-size:.86em;
+    font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;color:#9ad8ff}
+  pre{background:var(--code);border:1px solid var(--border);border-radius:10px;padding:16px 18px;
+    overflow-x:auto;font-size:.84rem;line-height:1.5;margin:0 0 16px}
+  pre code{background:none;padding:0;color:#c9d6e4}
+  /* cards / grids */
+  .grid{display:grid;gap:16px;margin:16px 0}
+  .grid.c2{grid-template-columns:1fr 1fr}
+  .grid.c3{grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px}
+  .card h4{margin-top:0}
+  /* callouts */
+  .note{border-left:3px solid var(--accent);background:var(--bg3);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+  .note.warn{border-color:var(--warn)}
+  .note.good{border-color:var(--good)}
+  .note .t{font-weight:700;display:block;margin-bottom:4px}
+  /* tables */
+  .tablewrap{overflow-x:auto;margin:18px 0;border:1px solid var(--border);border-radius:var(--radius)}
+  table{border-collapse:collapse;width:100%;font-size:.9rem}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+  th{background:var(--bg3);font-weight:700;color:#fff;white-space:nowrap;font-size:.82rem;text-transform:uppercase;letter-spacing:.4px}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:rgba(88,166,255,.05)}
+  td .pill{font-size:.72rem;padding:2px 8px;border-radius:999px;font-weight:700;white-space:nowrap}
+  .pill.green{background:rgba(63,185,80,.15);color:var(--good)}
+  .pill.orange{background:rgba(240,136,62,.15);color:var(--warn)}
+  .pill.red{background:rgba(255,123,114,.15);color:var(--bad)}
+  .pill.blue{background:rgba(88,166,255,.15);color:var(--accent)}
+  /* pros cons */
+  ul.clean{list-style:none;padding:0;margin:0}
+  ul.clean li{padding:5px 0 5px 26px;position:relative}
+  ul.clean li::before{position:absolute;left:0;top:4px;font-weight:800}
+  ul.pro li::before{content:"+";color:var(--good)}
+  ul.con li::before{content:"–";color:var(--bad)}
+  ul.dot li::before{content:"▸";color:var(--accent)}
+  /* steps */
+  .steps{counter-reset:s;margin:18px 0}
+  .step{position:relative;padding:4px 0 18px 56px;border-left:2px solid var(--border);margin-left:18px}
+  .step:last-child{border-left:2px solid transparent}
+  .step::before{counter-increment:s;content:counter(s);position:absolute;left:-19px;top:0;
+    width:38px;height:38px;border-radius:50%;background:var(--bg3);border:1px solid var(--accent);
+    color:var(--accent);font-weight:800;display:flex;align-items:center;justify-content:center}
+  .step h4{margin:6px 0 4px}
+  footer{border-top:1px solid var(--border);padding-top:24px;color:var(--muted);font-size:.85rem}
+  .kpi{font-size:1.9rem;font-weight:800;color:var(--accent2);line-height:1}
+  .kpi small{display:block;font-size:.78rem;color:var(--muted);font-weight:500;margin-top:6px}
+  @media(max-width:920px){
+    nav.side{display:none}
+    main{padding:28px 20px 80px}
+    .grid.c2,.grid.c3{grid-template-columns:1fr}
+    header.hero h1{font-size:1.8rem}
+  }
+</style>
+</head>
+<body>
+<nav class="xnav" aria-label="Navigation entre les pages">
+  <a href="index.html">Quiz</a>
+  <a href="claude-code-presentation.html">Claude Code</a>
+  <a href="agentique.html">Agentique</a>
+  <a href="ia-locale-rag.html" aria-current="page">IA locale &amp; RAG</a>
+</nav>
+<style>
+.xnav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;gap:6px;padding:6px 8px;background:rgba(20,20,25,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);border-radius:999px;font:500 13px/1 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.xnav a{color:#dfe3ea;text-decoration:none;padding:6px 12px;border-radius:999px;white-space:nowrap}
+.xnav a:hover{background:rgba(255,255,255,.12);color:#fff}
+.xnav a[aria-current="page"]{background:#6c5ce7;color:#fff}
+@media(max-width:560px){.xnav{font-size:12px;flex-wrap:wrap;justify-content:center;bottom:8px;max-width:94vw}}
+</style>
+<div class="layout">
+  <nav class="side">
+    <div class="brand">IA <span>locale</span> & RAG</div>
+    <div class="sub">Guide de mise en œuvre on-premise</div>
+    <a href="#lexique"><span class="n">§</span>Lexique des termes</a>
+    <a href="#intro"><span class="n">1</span>Pourquoi le local</a>
+    <a href="#outils"><span class="n">2</span>Outils : Ollama vs LM Studio</a>
+    <a href="#modeles"><span class="n">3</span>Modèles, quantization & VRAM</a>
+    <a href="#usages"><span class="n">4</span>Ce qu'on peut faire</a>
+    <a href="#rag"><span class="n">5</span>PDF & RAG en local</a>
+    <a href="#reco"><span class="n">★</span>Recommandations de setup</a>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <span class="tagline">Pragmatique · orienté mise en œuvre</span>
+      <h1>Faire tourner des <span>LLM en local</span><br>et interroger ses propres documents</h1>
+      <p class="lead">Confidentialité, coût, latence, souveraineté : un guide concret pour devs et chefs de projet qui évaluent l'exécution de modèles on-premise plutôt que via une API cloud — avec les chiffres VRAM/RAM qui comptent et le RAG 100 % local.</p>
+    </header>
+
+    <!-- ===================== LEXIQUE ===================== -->
+    <section id="lexique">
+      <h2><span class="num">§</span>Lexique des termes</h2>
+      <p class="muted">Les mots-clés du guide, en une ligne. À lire avant de plonger, ou à garder ouvert à côté.</p>
+      <div class="tablewrap">
+      <table>
+        <thead><tr><th style="width:22%">Terme</th><th>Définition</th></tr></thead>
+        <tbody>
+          <tr><td><strong>LLM</strong></td><td><em>Large Language Model</em> — un modèle de langage entraîné à prédire du texte (assistant, résumé, code…).</td></tr>
+          <tr><td><strong>Local / on-premise</strong></td><td>Le modèle tourne sur <strong>votre</strong> machine ou serveur, pas via une API cloud. Aucune donnée ne sort du réseau.</td></tr>
+          <tr><td><strong>Inférence</strong></td><td>Le fait de <strong>faire tourner</strong> un modèle déjà entraîné pour générer une réponse (par opposition à l'entraînement).</td></tr>
+          <tr><td><strong>Token</strong></td><td>L'unité de découpage du texte pour le modèle (~¾ d'un mot). Sert à mesurer contexte, vitesse et coût.</td></tr>
+          <tr><td><strong>Tokens/seconde (t/s)</strong></td><td>La vitesse de génération. Repère : &gt; 15 t/s = fluide en chat, &lt; 5 t/s = pénible en interactif.</td></tr>
+          <tr><td><strong>Paramètres (B)</strong></td><td>La « taille » du modèle en milliards de poids (7B, 70B…). Plus = plus capable mais plus gourmand et lent.</td></tr>
+          <tr><td><strong>Quantization</strong></td><td>Compression des poids (8, 5, 4 bits…) pour réduire la mémoire requise, avec une perte de qualité maîtrisée.</td></tr>
+          <tr><td><strong>GGUF</strong></td><td>Le format de fichier standard des modèles quantizés côté llama.cpp / Ollama / LM Studio.</td></tr>
+          <tr><td><strong>VRAM / RAM</strong></td><td><strong>VRAM</strong> = mémoire du GPU (rapide, chère). <strong>RAM</strong> = mémoire système (lente pour un LLM, moins chère). Le modèle doit y tenir.</td></tr>
+          <tr><td><strong>Mémoire unifiée</strong></td><td>Sur Apple Silicon (M1–M4), RAM partagée CPU/GPU : un Mac 64 Go peut charger un modèle qu'aucun laptop PC ne fait tourner.</td></tr>
+          <tr><td><strong>Fenêtre de contexte</strong></td><td>La quantité de texte (en tokens) que le modèle peut « voir » d'un coup. Un contexte long consomme de la mémoire (cache KV).</td></tr>
+          <tr><td><strong>Cache KV</strong></td><td>La mémoire consommée pour garder le contexte pendant la génération. Grossit avec la longueur du contexte.</td></tr>
+          <tr><td><strong>Offload</strong></td><td>Quand un modèle ne tient pas en VRAM, une partie bascule en RAM/CPU : ça marche, mais ça ralentit fortement.</td></tr>
+          <tr><td><strong>llama.cpp</strong></td><td>Le moteur d'inférence C/C++ bas niveau qui tourne sous Ollama et LM Studio.</td></tr>
+          <tr><td><strong>API compatible OpenAI</strong></td><td>Les outils locaux exposent la même interface que l'API OpenAI : votre code existant marche en changeant juste l'URL.</td></tr>
+          <tr><td><strong>RAG</strong></td><td><em>Retrieval-Augmented Generation</em> — retrouver les passages pertinents dans <em>vos</em> documents et les injecter dans le prompt pour que le LLM réponde dessus.</td></tr>
+          <tr><td><strong>Chunking</strong></td><td>Le découpage des documents en morceaux (~300–800 tokens) avant indexation. Étape clé de la qualité d'un RAG.</td></tr>
+          <tr><td><strong>Embeddings</strong></td><td>La transformation d'un texte en <strong>vecteur</strong> de nombres, pour mesurer la proximité de sens entre deux textes.</td></tr>
+          <tr><td><strong>Base vectorielle</strong></td><td>Stockage spécialisé (Chroma, Qdrant, FAISS) qui retrouve les vecteurs les plus proches d'une question.</td></tr>
+          <tr><td><strong>Retrieval</strong></td><td>L'étape de <strong>récupération</strong> : on vectorise la question et on ramène les chunks les plus proches (similarité cosinus).</td></tr>
+          <tr><td><strong>OCR</strong></td><td><em>Reconnaissance optique de caractères</em> (ex. Tesseract) — extraire le texte d'un PDF scanné ou d'une image.</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
+
+    <!-- ===================== 1 ===================== -->
+    <section id="intro">
+      <h2><span class="num">1</span>Pourquoi (et quand) faire de l'IA en local</h2>
+      <p>Le cloud (OpenAI, Anthropic, etc.) reste imbattable sur la qualité brute et la simplicité. Le local devient pertinent dès que <strong>la donnée, le coût récurrent ou l'indépendance</strong> pèsent plus lourd que les quelques points de qualité gagnés par les plus gros modèles propriétaires.</p>
+
+      <h3>Cas d'usage qui justifient le local</h3>
+      <div class="grid c2">
+        <div class="card">
+          <h4>🔒 Données sensibles & code propriétaire</h4>
+          <p class="muted">Aucune donnée ne quitte le réseau. Indispensable pour du code source confidentiel, des dossiers médicaux/juridiques, des documents RH ou financiers. Pas de risque que vos prompts servent à un entraînement tiers.</p>
+        </div>
+        <div class="card">
+          <h4>⚖️ Conformité RGPD & souveraineté</h4>
+          <p class="muted">Pas de transfert hors UE, pas de sous-traitant à auditer, traçabilité totale. Simplifie radicalement les analyses d'impact (PIA) et les exigences de certains secteurs régulés (santé, défense, banque, secteur public).</p>
+        </div>
+        <div class="card">
+          <h4>💸 Coût récurrent maîtrisé</h4>
+          <p class="muted">Au-delà d'un certain volume, le coût par token du cloud devient une rente. En local, le coût est un <strong>investissement matériel amorti</strong> : une station bien dimensionnée se rentabilise face à des milliers d'appels/jour (agents, traitement batch, autocomplétion).</p>
+        </div>
+        <div class="card">
+          <h4>📡 Hors-ligne & faible latence</h4>
+          <p class="muted">Fonctionne sans connexion (terrain, site industriel, air-gap). Latence locale stable, pas de rate-limit ni de coupure d'API côté fournisseur. Idéal pour de l'autocomplétion ou des boucles d'agent très bavardes.</p>
+        </div>
+      </div>
+
+      <h3>Les limites — à dire honnêtement</h3>
+      <div class="grid c2">
+        <div class="card">
+          <ul class="clean con">
+            <li><strong>Plafond de qualité.</strong> Un 70B local reste en dessous des meilleurs modèles cloud frontières sur le raisonnement complexe et les contextes très longs.</li>
+            <li><strong>Coût matériel initial.</strong> Une vraie station à GPU 24–48 Go se chiffre en milliers d'euros.</li>
+            <li><strong>Ops à votre charge.</strong> Mises à jour, monitoring, sécurité, mises à l'échelle : c'est vous l'équipe infra.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <ul class="clean con">
+            <li><strong>Débit limité.</strong> Une seule machine sert peu d'utilisateurs en parallèle sans dégradation.</li>
+            <li><strong>Fenêtre de contexte.</strong> Souvent plus courte en pratique (la VRAM est mangée par le cache KV).</li>
+            <li><strong>Écosystème mouvant.</strong> Modèles et outils évoluent vite ; il faut suivre.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note">
+        <span class="t">Règle de décision rapide</span>
+        Donnée sensible + volume élevé + besoin offline → <strong>local</strong>. Qualité maximale + usage ponctuel + pas de contrainte de données → <strong>cloud</strong>. Beaucoup d'équipes finissent en <strong>hybride</strong> : local par défaut, cloud en débordement pour les tâches les plus dures.
+      </div>
+    </section>
+
+    <!-- ===================== 2 ===================== -->
+    <section id="outils">
+      <h2><span class="num">2</span>Les outils : Ollama vs LM Studio</h2>
+      <p>Ce sont les deux portes d'entrée les plus simples. Les deux embarquent <strong>llama.cpp</strong> sous le capot et exposent une <strong>API compatible OpenAI</strong> en local — c'est le point clé pour intégrer dans un workflow dev existant.</p>
+
+      <div class="grid c2">
+        <div class="card">
+          <h4>Ollama — le « Docker des LLM »</h4>
+          <p class="muted">CLI-first, pensé pour les devs et le scripting. <code>ollama pull</code> / <code>ollama run</code>, un Modelfile pour personnaliser, un serveur qui tourne en daemon. Parfait pour intégrer dans du code, des conteneurs, du CI.</p>
+          <ul class="clean pro">
+            <li>Léger, scriptable, idéal serveur/headless</li>
+            <li>API OpenAI sur <code>localhost:11434</code></li>
+            <li>Énorme écosystème d'intégrations (VS Code, Open WebUI…)</li>
+          </ul>
+          <ul class="clean con">
+            <li>Pas de GUI native (sélection de modèle moins guidée)</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>LM Studio — le confort du GUI</h4>
+          <p class="muted">Application bureau (Win/Mac/Linux) avec catalogue de modèles, chat intégré, réglages visuels (offload GPU, contexte) et un serveur local en un clic. Idéal pour découvrir, tester et comparer sans toucher au terminal.</p>
+          <ul class="clean pro">
+            <li>Recherche/téléchargement de modèles guidé (Hugging Face)</li>
+            <li>Serveur API OpenAI sur <code>localhost:1234</code></li>
+            <li>Visualise l'impact RAM/VRAM avant de charger</li>
+          </ul>
+          <ul class="clean con">
+            <li>Moins naturel à automatiser/scripter côté serveur</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tablewrap">
+      <table>
+        <thead><tr>
+          <th>Critère</th><th>Ollama</th><th>LM Studio</th>
+        </tr></thead>
+        <tbody>
+          <tr><td><strong>Philosophie</strong></td><td>CLI / serveur, automatisation</td><td>Application desktop, exploration</td></tr>
+          <tr><td><strong>Interface</strong></td><td>Terminal (+ GUIs tierces)</td><td>GUI riche + chat intégré</td></tr>
+          <tr><td><strong>Installation</strong></td><td><span class="pill green">Très simple</span> 1 binaire / 1 commande</td><td><span class="pill green">Très simple</span> installeur clic</td></tr>
+          <tr><td><strong>Format de modèles</strong></td><td>GGUF (registry Ollama) + import GGUF</td><td>GGUF + MLX (Apple) via Hugging Face</td></tr>
+          <tr><td><strong>API OpenAI locale</strong></td><td><span class="pill blue">Oui</span> <code>:11434/v1</code></td><td><span class="pill blue">Oui</span> <code>:1234/v1</code></td></tr>
+          <tr><td><strong>Intégration workflow dev</strong></td><td><span class="pill green">Excellente</span> scripts, Docker, CI</td><td><span class="pill orange">Bonne</span> via le serveur local</td></tr>
+          <tr><td><strong>Personnalisation</strong></td><td>Modelfile (system prompt, params)</td><td>Presets visuels</td></tr>
+          <tr><td><strong>Cible</strong></td><td>Devs, intégration, prod légère</td><td>Débutants, exploration, desktop</td></tr>
+          <tr><td><strong>RAG intégré</strong></td><td>Non (via Open WebUI / AnythingLLM)</td><td><span class="pill green">Oui</span> « Chat with Documents »</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>Exposer l'API locale (compatible OpenAI)</h3>
+      <p>Le gros intérêt : votre code existant qui parle à OpenAI fonctionne en changeant juste l'URL de base et la clé.</p>
+      <pre><code># Ollama
+curl http://localhost:11434/v1/chat/completions -d '{
+  "model": "qwen2.5-coder:7b",
+  "messages": [{"role":"user","content":"Refactore cette fonction C#"}]
+}'
+
+# Côté client (Python/C#/JS) : base_url = http://localhost:11434/v1
+# api_key = "ollama" (factice, non vérifiée)</code></pre>
+
+      <h3>Les autres alternatives, en bref</h3>
+      <div class="grid c3">
+        <div class="card"><h4>llama.cpp</h4><p class="muted">Le moteur C/C++ bas niveau sous Ollama/LM Studio. Contrôle total, performances, mais à la main. Pour qui veut optimiser finement.</p></div>
+        <div class="card"><h4>vLLM</h4><p class="muted">Moteur d'inférence haut débit pour <strong>servir en prod</strong> (multi-utilisateurs, GPU). Plus complexe, orienté serveur GPU, pas laptop.</p></div>
+        <div class="card"><h4>Jan</h4><p class="muted">Alternative open-source type LM Studio, 100 % offline, interface soignée. Bon compromis GUI + ouverture.</p></div>
+        <div class="card"><h4>GPT4All</h4><p class="muted">Desktop grand public, simple, RAG local intégré. Léger, orienté CPU, pratique sur petites machines.</p></div>
+        <div class="card"><h4>Open WebUI</h4><p class="muted">Interface web (type ChatGPT) qui se branche sur Ollama. Multi-utilisateurs, RAG, gestion de docs. Excellent front d'équipe.</p></div>
+        <div class="card"><h4>AnythingLLM</h4><p class="muted">Solution RAG clé en main (desktop ou Docker) : ingestion docs, base vectorielle, espaces de travail. Voir section 5.</p></div>
+      </div>
+    </section>
+
+    <!-- ===================== 3 ===================== -->
+    <section id="modeles">
+      <h2><span class="num">3</span>Modèles, quantization & besoins machine</h2>
+      <p>Trois variables déterminent ce qui tourne chez vous : la <strong>taille du modèle</strong> (paramètres), la <strong>quantization</strong> (précision des poids) et la <strong>mémoire</strong> (VRAM sur GPU, RAM sur CPU, mémoire unifiée sur Apple Silicon).</p>
+
+      <h3>Taille du modèle (paramètres)</h3>
+      <p>Plus de paramètres = plus « intelligent » mais plus gourmand et plus lent. Ordres de grandeur utiles :</p>
+      <div class="grid c3">
+        <div class="card"><div class="kpi">1B–3B<small>Autocomplétion, classification, tâches simples. Tourne partout, même CPU.</small></div></div>
+        <div class="card"><div class="kpi">7B–14B<small>Le sweet spot. Bon assistant code/texte, raisonnement correct. Cible des laptops/desktops sérieux.</small></div></div>
+        <div class="card"><div class="kpi">32B–70B+<small>Raisonnement avancé, proche du cloud sur beaucoup de tâches. Exige une vraie station GPU.</small></div></div>
+      </div>
+
+      <h3>La quantization : la clé pour faire rentrer un modèle</h3>
+      <p>Un modèle est entraîné en 16 bits (FP16). La quantization <strong>compresse les poids</strong> (8, 5, 4 bits…) pour diviser la mémoire requise, avec une perte de qualité maîtrisée. <strong>GGUF</strong> est le format de fichier standard côté llama.cpp/Ollama/LM Studio.</p>
+      <div class="tablewrap">
+      <table>
+        <thead><tr><th>Niveau</th><th>Bits/poids</th><th>Mémoire vs FP16</th><th>Qualité</th><th>Quand l'utiliser</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Q8</strong></td><td>~8 bits</td><td>~50 %</td><td><span class="pill green">Quasi intacte</span></td><td>Si vous avez la mémoire, qualité max</td></tr>
+          <tr><td><strong>Q6_K</strong></td><td>~6 bits</td><td>~40 %</td><td><span class="pill green">Excellente</span></td><td>Très bon compromis</td></tr>
+          <tr><td><strong>Q5_K_M</strong></td><td>~5 bits</td><td>~35 %</td><td><span class="pill green">Très bonne</span></td><td>Compromis recommandé</td></tr>
+          <tr><td><strong>Q4_K_M</strong></td><td>~4 bits</td><td>~30 %</td><td><span class="pill orange">Bonne</span></td><td><strong>Le défaut le plus courant</strong> — meilleur rapport taille/qualité</td></tr>
+          <tr><td><strong>Q3 / Q2</strong></td><td>2–3 bits</td><td>~20–25 %</td><td><span class="pill red">Dégradée</span></td><td>Uniquement pour faire tenir un gros modèle de force</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="note good"><span class="t">Règle d'or</span>Privilégiez un <strong>modèle plus gros mais plus quantizé</strong> plutôt qu'un petit modèle en haute précision. Un 14B en Q4 bat presque toujours un 7B en Q8 à mémoire égale.</div>
+
+      <h3>Combien de mémoire pour quel modèle ?</h3>
+      <p>Estimation pratique : <strong>mémoire ≈ (nb paramètres en milliards) × (bits/8) + ~15–25 % d'overhead</strong> (cache KV pour le contexte, activations). En Q4, comptez grossièrement <strong>~0,6 Go par milliard de paramètres</strong>.</p>
+      <div class="tablewrap">
+      <table>
+        <thead><tr><th>Modèle</th><th>Q4_K_M (≈ taille)</th><th>VRAM/RAM conseillée</th><th>Tient sur…</th></tr></thead>
+        <tbody>
+          <tr><td><strong>3B</strong></td><td>~2 Go</td><td>4–6 Go</td><td>N'importe quel laptop récent, même iGPU/CPU</td></tr>
+          <tr><td><strong>7B–8B</strong></td><td>~4–5 Go</td><td>6–8 Go</td><td>GPU 8 Go, Mac 16 Go, bon laptop</td></tr>
+          <tr><td><strong>13B–14B</strong></td><td>~8–9 Go</td><td>10–12 Go</td><td>RTX 3060 12 Go, Mac 16–24 Go</td></tr>
+          <tr><td><strong>32B–34B</strong></td><td>~19–20 Go</td><td>24 Go</td><td>RTX 3090/4090 24 Go, Mac 32–48 Go</td></tr>
+          <tr><td><strong>70B</strong></td><td>~40–42 Go</td><td>48 Go (ou 2×24 Go)</td><td>2× GPU 24 Go, Mac 64–96 Go</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="muted">Ajoutez de la marge pour le <strong>contexte long</strong> : le cache KV peut consommer plusieurs Go à 32k+ tokens. Si ça déborde, la couche manquante est offloadée en RAM/CPU → ça marche mais ça ralentit fortement.</p>
+
+      <h3>GPU vs CPU vs Apple Silicon</h3>
+      <div class="grid c3">
+        <div class="card">
+          <h4>🎮 GPU (VRAM)</h4>
+          <p class="muted">Le roi de la vitesse. Tout le modèle doit tenir en <strong>VRAM</strong> pour être rapide. NVIDIA (CUDA) est le standard. C'est la VRAM, pas la puissance brute, qui détermine quel modèle vous pouvez charger.</p>
+        </div>
+        <div class="card">
+          <h4>🖥️ CPU (RAM)</h4>
+          <p class="muted">Fonctionne avec beaucoup de RAM système (moins chère), mais <strong>nettement plus lent</strong> (bande passante mémoire limitée). OK pour des petits modèles ou du batch non interactif, pénible en chat temps réel sur gros modèle.</p>
+        </div>
+        <div class="card">
+          <h4>🍎 Apple Silicon</h4>
+          <p class="muted">La <strong>mémoire unifiée</strong> (M1–M4) est partagée CPU/GPU : un Mac 64 Go peut charger un 70B, ce qu'aucun laptop PC ne fait. Excellent rapport perf/watt. ~75 % de la RAM est allouable au GPU.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 4 ===================== -->
+    <section id="usages">
+      <h2><span class="num">4</span>Ce qu'on peut réellement faire selon la machine</h2>
+      <p>Vitesse mesurée en <strong>tokens/seconde</strong> (t/s). Repère de confort : <strong>&gt; 15 t/s</strong> = fluide en chat ; <strong>5–10 t/s</strong> = utilisable ; <strong>&lt; 5 t/s</strong> = pénible en interactif (OK en batch).</p>
+      <div class="tablewrap">
+      <table>
+        <thead><tr><th>Machine</th><th>Modèle réaliste</th><th>Vitesse typique</th><th>Ce que ça permet</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Laptop sans GPU dédié</strong><br><span class="muted">8–16 Go RAM</span></td>
+            <td>3B (Q4)<br>7B (Q4, lent)</td>
+            <td><span class="pill orange">5–15 t/s</span></td>
+            <td>Autocomplétion, reformulation, classification, résumés courts, assistant léger.</td>
+          </tr>
+          <tr>
+            <td><strong>Laptop GPU / Mac 16 Go</strong><br><span class="muted">8 Go VRAM ou unifiée</span></td>
+            <td>7B–8B (Q4)<br>14B (serré)</td>
+            <td><span class="pill green">20–40 t/s</span></td>
+            <td>Assistant code au quotidien, chat sérieux, RAG sur docs perso, refactor.</td>
+          </tr>
+          <tr>
+            <td><strong>Desktop RTX 12 Go / Mac 24–32 Go</strong></td>
+            <td>14B (Q4/Q5)<br>32B (Mac)</td>
+            <td><span class="pill green">25–50 t/s</span></td>
+            <td>Très bon assistant généraliste + code, RAG confortable, agents simples.</td>
+          </tr>
+          <tr>
+            <td><strong>Station RTX 24 Go / Mac 64 Go</strong></td>
+            <td>32B (Q4) fluide<br>70B (possible)</td>
+            <td><span class="pill green">15–40 t/s</span> (32B)</td>
+            <td>Raisonnement avancé, code complexe, RAG sur gros corpus, serveur petite équipe.</td>
+          </tr>
+          <tr>
+            <td><strong>Bi-GPU 2×24 Go / Mac 96–128 Go</strong></td>
+            <td>70B (Q4/Q5)</td>
+            <td><span class="pill orange">8–20 t/s</span></td>
+            <td>Le plus proche du cloud en local : raisonnement, longs contextes, prod légère.</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="note warn"><span class="t">Le compromis honnête</span>Qualité, vitesse et budget : on en choisit deux. Un 70B local impressionne mais reste lent et cher ; pour 90 % du travail dev quotidien, un <strong>14B–32B en Q4 sur une carte 24 Go</strong> offre le meilleur ressenti. Et pour du <strong>code</strong>, un modèle spécialisé (ex. famille <code>qwen2.5-coder</code>) de 7–14B bat souvent un généraliste plus gros.</div>
+    </section>
+
+    <!-- ===================== 5 ===================== -->
+    <section id="rag">
+      <h2><span class="num">5</span>Lire des PDF & interroger ses docs : le RAG 100 % local</h2>
+      <p>Un LLM seul ne connaît pas vos documents. Le <strong>RAG (Retrieval-Augmented Generation)</strong> retrouve les passages pertinents dans <em>vos</em> fichiers et les injecte dans le prompt. Tout — modèle, embeddings, base vectorielle — peut rester sur votre machine : aucune donnée ne sort.</p>
+
+      <h3>Le principe en 4 étapes</h3>
+      <div class="steps">
+        <div class="step"><h4>Ingestion</h4><p class="muted">On charge les sources (PDF, Word, Markdown, code…) et on en extrait le texte brut. Un PDF scanné passe par de l'OCR (Tesseract) au préalable.</p></div>
+        <div class="step"><h4>Chunking</h4><p class="muted">On découpe le texte en morceaux (~300–800 tokens, avec chevauchement). Trop gros = bruit ; trop petit = perte de contexte. C'est l'étape qui fait le plus la qualité du RAG.</p></div>
+        <div class="step"><h4>Embeddings</h4><p class="muted">Chaque chunk est transformé en vecteur par un <strong>modèle d'embeddings local</strong> (ex. <code>nomic-embed-text</code>, <code>bge-m3</code>, <code>all-MiniLM</code>) puis stocké dans une base vectorielle.</p></div>
+        <div class="step"><h4>Retrieval + génération</h4><p class="muted">La question est elle aussi vectorisée ; on récupère les chunks les plus proches (similarité cosinus), on les colle dans le prompt, et le LLM répond <strong>en citant vos sources</strong>.</p></div>
+      </div>
+
+      <h3>Les briques concrètes</h3>
+      <div class="tablewrap">
+      <table>
+        <thead><tr><th>Couche</th><th>Options locales</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Embeddings locaux</strong></td><td><code>nomic-embed-text</code>, <code>bge-m3</code>, <code>mxbai-embed-large</code>, <code>all-MiniLM</code></td><td>Servis par Ollama/LM Studio. <code>bge-m3</code> gère bien le multilingue (FR).</td></tr>
+          <tr><td><strong>Base vectorielle</strong></td><td><span class="pill blue">Chroma</span> <span class="pill blue">Qdrant</span> <span class="pill blue">FAISS</span></td><td>FAISS = librairie en mémoire (simple, rapide). Chroma = facile, fichier local. Qdrant = robuste, scalable, type serveur.</td></tr>
+          <tr><td><strong>Orchestration (code)</strong></td><td>LlamaIndex, LangChain</td><td>Pour construire un pipeline sur mesure (Python). LlamaIndex est très orienté RAG.</td></tr>
+          <tr><td><strong>Clé en main (no/low-code)</strong></td><td>AnythingLLM, Open WebUI, LM Studio, GPT4All</td><td>Glisser-déposer des docs, base vectorielle gérée pour vous.</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <h3>Trois façons de le mettre en place</h3>
+      <div class="grid c3">
+        <div class="card">
+          <h4>① Le plus simple</h4>
+          <p class="muted"><strong>LM Studio</strong> (« Chat with Documents ») ou <strong>GPT4All</strong> : on dépose un PDF et on pose des questions. Zéro config, idéal pour tester.</p>
+        </div>
+        <div class="card">
+          <h4>② Le bon compromis</h4>
+          <p class="muted"><strong>AnythingLLM</strong> ou <strong>Open WebUI</strong> branché sur <strong>Ollama</strong> : espaces de travail, gestion de corpus, base vectorielle (Chroma/Qdrant) intégrée, multi-utilisateurs. Le choix d'équipe.</p>
+        </div>
+        <div class="card">
+          <h4>③ Sur mesure (dev)</h4>
+          <p class="muted"><strong>LlamaIndex/LangChain + Qdrant + Ollama</strong> : pipeline maîtrisé, intégrable dans une app C#/Python, contrôle total du chunking et du retrieval.</p>
+        </div>
+      </div>
+
+      <div class="note"><span class="t">Stack 100 % local typique</span><code>Ollama</code> (LLM + embeddings) + <code>Qdrant</code> ou <code>Chroma</code> (vecteurs) + <code>AnythingLLM</code> ou <code>LlamaIndex</code> (orchestration). Tout tourne sur la même machine, rien ne sort du réseau.</div>
+    </section>
+
+    <!-- ===================== RECO ===================== -->
+    <section id="reco">
+      <h2><span class="num">★</span>Recommandations de setup</h2>
+      <div class="grid c2">
+        <div class="card">
+          <h4>👤 Dev solo</h4>
+          <p class="muted"><strong>Objectif :</strong> assistant code/texte privé + RAG sur ses propres docs.</p>
+          <ul class="clean dot">
+            <li><strong>Machine :</strong> laptop GPU 8–12 Go VRAM, ou Mac (Apple Silicon) 16–32 Go.</li>
+            <li><strong>Runtime :</strong> Ollama (intégration éditeur/CLI) ou LM Studio si vous préférez le GUI.</li>
+            <li><strong>Modèles :</strong> un 7B–14B en Q4 généraliste + <code>qwen2.5-coder:7b</code> pour le code.</li>
+            <li><strong>RAG :</strong> LM Studio « Chat with Documents » ou AnythingLLM + <code>nomic-embed-text</code>.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>👥 Petite équipe</h4>
+          <p class="muted"><strong>Objectif :</strong> service partagé, confidentiel, sur le corpus de l'entreprise.</p>
+          <ul class="clean dot">
+            <li><strong>Machine :</strong> station serveur GPU 24 Go (RTX 4090/A-series) ou Mac Studio 64–128 Go.</li>
+            <li><strong>Runtime :</strong> Ollama (ou vLLM si fort débit) derrière l'API OpenAI locale.</li>
+            <li><strong>Modèles :</strong> 32B en Q4 par défaut, 70B si la machine suit.</li>
+            <li><strong>Front + RAG :</strong> Open WebUI ou AnythingLLM (multi-utilisateurs) + Qdrant + <code>bge-m3</code>.</li>
+            <li><strong>Bonus :</strong> garder une porte cloud pour les tâches les plus dures (hybride).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note good"><span class="t">À retenir</span>Commencez petit (Ollama + un 7B + un PDF en RAG), mesurez vos vrais besoins en tokens/s et en qualité, <strong>puis</strong> investissez dans le matériel. La VRAM est la ressource qui décide de tout.</div>
+    </section>
+
+    <footer>
+      Guide IA locale & RAG on-premise · les chiffres VRAM/RAM sont des ordres de grandeur pratiques (Q4_K_M, contexte modéré) à ajuster selon le modèle exact, la longueur de contexte et le runtime. L'écosystème évolue vite — vérifiez les versions de modèles au moment de l'installation.
+    </footer>
+  </main>
+</div>
+</body>
+</html>

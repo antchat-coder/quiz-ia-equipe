@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code — pourquoi l'essayer (17-18 min)</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --border:#30363d;
+    --txt:#e6edf3; --muted:#8b949e; --accent:#d2a8ff; --accent2:#79c0ff;
+    --green:#3fb950; --red:#f85149; --yellow:#e3b341; --code:#0b0f14;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg); color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    overflow:hidden;
+  }
+  #deck{height:100vh;width:100vw;position:relative}
+  .slide{
+    position:absolute; inset:0; display:none;
+    flex-direction:column; justify-content:center;
+    padding:5vh 7vw; opacity:0; transition:opacity .25s ease;
+  }
+  .slide.active{display:flex; opacity:1}
+  h1{font-size:clamp(28px,4.2vw,52px); line-height:1.1; margin-bottom:18px}
+  h2{font-size:clamp(22px,3vw,38px); margin-bottom:6px; color:var(--accent)}
+  h3{font-size:clamp(16px,1.7vw,22px); color:var(--accent2); margin:14px 0 8px}
+  p,li{font-size:clamp(14px,1.45vw,19px); line-height:1.5; color:var(--txt)}
+  ul{margin-left:22px; margin-top:6px}
+  li{margin:5px 0}
+  .muted{color:var(--muted)}
+  .kicker{color:var(--accent2); font-weight:600; letter-spacing:.12em; text-transform:uppercase; font-size:13px; margin-bottom:10px}
+  .tag{display:inline-block; background:var(--panel); border:1px solid var(--border); color:var(--muted);
+       border-radius:999px; padding:3px 12px; font-size:12px; margin:3px 6px 3px 0}
+  .cols{display:flex; gap:28px; align-items:flex-start}
+  .col{flex:1; min-width:0}
+  .card{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:16px 18px; margin-top:12px}
+  .problem{border-left:4px solid var(--red)}
+  .solution{border-left:4px solid var(--green)}
+  .badge{font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase}
+  .badge.p{color:var(--red)} .badge.s{color:var(--green)}
+  pre{background:var(--code); border:1px solid var(--border); border-radius:10px;
+      padding:14px 16px; overflow:auto; margin-top:10px; font-size:clamp(11px,1.15vw,15px)}
+  code{font-family:"SF Mono",Menlo,Consolas,"Liberation Mono",monospace; color:#c9d1d9}
+  .c-com{color:#8b949e} .c-key{color:#ff7b72} .c-str{color:#a5d6ff}
+  .c-fn{color:#d2a8ff} .c-num{color:#79c0ff} .c-cmd{color:#3fb950}
+  .loop{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+  .step{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:10px 14px; font-size:14px}
+  .step b{color:var(--accent2)}
+  .arrow{color:var(--muted); align-self:center; font-size:20px}
+  footer{position:fixed; bottom:14px; left:0; right:0; display:flex; justify-content:space-between;
+         padding:0 26px; color:var(--muted); font-size:12px; pointer-events:none}
+  .bar{position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .25s}
+  .big{font-size:clamp(20px,2.2vw,28px); line-height:1.4}
+  .center{align-items:center; text-align:center}
+  .pill-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px}
+  table{border-collapse:collapse; margin-top:12px; width:100%}
+  td,th{border:1px solid var(--border); padding:9px 12px; text-align:left; font-size:clamp(13px,1.3vw,17px)}
+  th{background:var(--panel); color:var(--accent)}
+  .hint{position:fixed; bottom:14px; left:50%; transform:translateX(-50%); color:var(--muted); font-size:12px}
+  .num{color:var(--accent); font-weight:700; font-size:clamp(26px,3vw,40px); margin-right:10px}
+</style>
+</head>
+<body>
+<nav class="xnav" aria-label="Navigation entre les pages">
+  <a href="index.html">Quiz</a>
+  <a href="claude-code-presentation.html" aria-current="page">Claude Code</a>
+  <a href="agentique.html">Agentique</a>
+  <a href="ia-locale-rag.html">IA locale &amp; RAG</a>
+</nav>
+<style>
+.xnav{position:fixed;top:14px;right:14px;z-index:99999;display:flex;gap:6px;padding:6px 8px;background:rgba(20,20,25,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);border-radius:999px;font:500 13px/1 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.xnav a{color:#dfe3ea;text-decoration:none;padding:6px 12px;border-radius:999px;white-space:nowrap}
+.xnav a:hover{background:rgba(255,255,255,.12);color:#fff}
+.xnav a[aria-current="page"]{background:#6c5ce7;color:#fff}
+@media(max-width:560px){.xnav{font-size:12px;flex-wrap:wrap;justify-content:flex-end;top:8px;right:8px;max-width:94vw}}
+</style>
+<div class="bar" id="bar"></div>
+<div id="deck">
+
+  <!-- 0 — Titre -->
+  <section class="slide active center">
+    <div class="kicker">Démo interne · ~17-18 min</div>
+    <h1>Claude Code : ce n'est plus un chatbot,<br>c'est un collègue qui agit</h1>
+    <p class="big muted">Pourquoi l'essayer sur notre stack — exemples tirés du projet <b>Recall</b>.</p>
+    <div class="pill-row" style="justify-content:center">
+      <span class="tag">C#/.NET (CQRS/MediatR)</span><span class="tag">Angular standalone</span><span class="tag">Syncfusion EJ2</span>
+    </div>
+    <p class="muted" style="margin-top:26px">4 temps + 2 bonus : orchestration IA et harnais. Un problème réel avant chaque solution.</p>
+  </section>
+
+  <!-- 1 — Plan -->
+  <section class="slide">
+    <div class="kicker">Le plan</div>
+    <h2>Où on va en 17-18 minutes</h2>
+    <div class="loop" style="margin-top:18px">
+      <div class="step"><span class="num">1</span><b>L'agentique</b><br>un agent qui boucle, pas qui répond</div>
+      <div class="step"><span class="num">2</span><b>Claude Code</b><br>où ça vit, ce que ça remplace</div>
+      <div class="step"><span class="num">3</span><b>Skills</b><br>nos conventions, apprises une fois</div>
+      <div class="step"><span class="num">4</span><b>MCP</b><br>brancher l'agent sur nos outils</div>
+    </div>
+    <p class="muted" style="margin-top:26px">Vous connaissez déjà le mode « copier-coller depuis un chat ». Ici : mode « je délègue, j'observe, je décide ».</p>
+  </section>
+
+  <!-- ===================== LEXIQUE ===================== -->
+  <section class="slide">
+    <div class="kicker">À garder sous la main</div>
+    <h2>Lexique — les mots-clés (1/2)</h2>
+    <table>
+      <tr><th style="width:26%">Terme</th><th>Définition</th></tr>
+      <tr><td><b>LLM / chatbot</b></td><td>Un modèle de langage (ex. ChatGPT) qui <b>produit du texte</b> à partir d'un message. Il ne voit que ce que tu lui colles et s'arrête après sa réponse.</td></tr>
+      <tr><td><b>Agent</b></td><td>Un LLM à qui on donne des <b>outils</b> (lire des fichiers, lancer des commandes) et qui <b>agit en boucle</b> jusqu'à atteindre un résultat, au lieu de juste répondre.</td></tr>
+      <tr><td><b>Agentique</b></td><td>Le mode de fonctionnement d'un agent : lire → planifier → exécuter → <b>observer le résultat réel</b> → corriger, et recommencer.</td></tr>
+      <tr><td><b>Boucle agentique</b></td><td>Le cycle que l'agent répète tout seul. Sa force = l'étape <b>Observer</b> (il lit la vraie sortie de test/erreur), impossible pour un chatbot.</td></tr>
+      <tr><td><b>Orchestration IA</b></td><td>Les décisions que l'agent prend pendant la boucle : quoi lire d'abord, combien de tentatives, corriger le code ou reformuler la demande.</td></tr>
+      <tr><td><b>Harnais</b></td><td>Le cadre de contrôle autour de l'agent : branche dédiée, tests obligatoires, pas de commit auto, relecture humaine. Il empêche l'« IA en roue libre ».</td></tr>
+    </table>
+  </section>
+
+  <section class="slide">
+    <div class="kicker">À garder sous la main</div>
+    <h2>Lexique — les mots-clés (2/2)</h2>
+    <table>
+      <tr><th style="width:26%">Terme</th><th>Définition</th></tr>
+      <tr><td><b>Claude Code</b></td><td>L'agent d'Anthropic qui vit <b>là où tu codes</b> (terminal, IDE) : il lit le dépôt, modifie les fichiers et lance les commandes du projet.</td></tr>
+      <tr><td><b>Prompt</b></td><td>La consigne en langage naturel que tu donnes à l'agent (ex. « ajoute un test et fais-le passer »).</td></tr>
+      <tr><td><b>Token</b></td><td>L'unité de découpage du texte pour le modèle (~¾ d'un mot). Sert à mesurer la longueur lue/écrite et le coût.</td></tr>
+      <tr><td><b>CLAUDE.md</b></td><td>Fichier de règles <b>toujours chargées</b> du dépôt (les non-négociables : tests avant commit, langue, etc.).</td></tr>
+      <tr><td><b>Skill</b></td><td>Un savoir-faire (fichier <code>SKILL.md</code>) <b>chargé à la demande</b> uniquement quand la tâche correspond : conventions de commit, style de revue…</td></tr>
+      <tr><td><b>MCP</b></td><td><i>Model Context Protocol</i> : un standard pour <b>brancher l'agent sur des outils externes</b> (GitHub, Jira, base de données, monitoring).</td></tr>
+      <tr><td><b>Diff / PR</b></td><td><b>Diff</b> = les lignes ajoutées/supprimées par une modif. <b>PR</b> (Pull Request) = la proposition de fusion qu'on relit avant d'intégrer.</td></tr>
+      <tr><td><b>Boilerplate</b></td><td>Le code répétitif et sans valeur ajoutée (structure de tests, branchements mécaniques) que l'agent génère à ta place.</td></tr>
+      <tr><td><b>CQRS / MediatR</b></td><td>Motif d'archi du back C# : on sépare commandes (écriture) et requêtes (lecture) ; <b>MediatR</b> route chaque message vers son handler.</td></tr>
+    </table>
+  </section>
+
+  <!-- ===================== 1. AGENTIQUE ===================== -->
+  <section class="slide center">
+    <div class="kicker">Temps 1 / 4</div>
+    <h1>L'agentique</h1>
+    <p class="big muted">« Ce n'est plus un chatbot, c'est un collègue qui agit »</p>
+  </section>
+
+  <section class="slide">
+    <h2>Le problème</h2>
+    <div class="card problem">
+      <span class="badge p">Vécu</span>
+      <p style="margin-top:8px">Le chatbot te <b>donne</b> du code. À toi de le coller, l'adapter, lancer les tests,
+      voir l'erreur, retourner copier l'erreur dans le chat, recoller… 6 allers-retours pour un test qui passe.
+      Le chatbot ne <b>voit</b> ni ton repo, ni ta sortie de test.</p>
+    </div>
+    <h3>La différence de fond</h3>
+    <table>
+      <tr><th>LLM / chatbot</th><th>Agent</th></tr>
+      <tr><td>Produit du texte</td><td>Produit des <b>actions</b> sur ton repo</td></tr>
+      <tr><td>Ne voit que ce que tu colles</td><td>Lit les fichiers, lance les commandes, lit la sortie</td></tr>
+      <tr><td>Un coup, puis stop</td><td><b>Boucle</b> jusqu'au résultat</td></tr>
+    </table>
+  </section>
+
+  <section class="slide">
+    <h2>La boucle agentique</h2>
+    <div class="loop">
+      <div class="step"><b>Lire</b><br>l'arborescence, le code</div>
+      <span class="arrow">→</span>
+      <div class="step"><b>Planifier</b><br>propose un plan</div>
+      <span class="arrow">→</span>
+      <div class="step"><b>Exécuter</b><br>édite, lance tests &amp; commandes</div>
+      <span class="arrow">→</span>
+      <div class="step"><b>Observer</b><br>lit la sortie / l'erreur</div>
+      <span class="arrow">→</span>
+      <div class="step"><b>Corriger</b><br>… et reboucle</div>
+    </div>
+    <p style="margin-top:18px" class="muted">La clé, c'est <b>Observer</b> : l'agent voit le résultat réel de ses actions. C'est ce qu'un chatbot ne peut pas faire.</p>
+  </section>
+
+  <section class="slide">
+    <h2>Orchestration IA : le cerveau de la boucle</h2>
+    <p class="muted">Un agent utile n'est pas juste « automatique ». Il prend des décisions en continu.</p>
+    <div class="loop">
+      <div class="step"><b>Prioriser</b><br>quel fichier lire en premier</div>
+      <span class="arrow">→</span>
+      <div class="step"><b>Limiter</b><br>combien de tentatives avant escalade</div>
+      <span class="arrow">→</span>
+      <div class="step"><b>Arbitrer</b><br>corriger le code ou clarifier la demande</div>
+    </div>
+    <ul style="margin-top:12px">
+      <li><b>Signal vert :</b> les tests passent en 1 à 3 boucles</li>
+      <li><b>Signal orange :</b> l'agent touche des fichiers hors scope</li>
+      <li><b>Signal rouge :</b> plus de 3 boucles sans progrès → on reformule</li>
+    </ul>
+    <p class="muted" style="margin-top:10px">L'orchestration sert à garder l'agent efficace et prévisible, pas « autonome coûte que coûte ».</p>
+  </section>
+
+  <section class="slide">
+    <h2>Exemple agentique simple · ajouter des tests xUnit</h2>
+    <p class="muted">Tâche donnée à l'agent (bug réel : codes d'identification en doublon) :</p>
+    <pre><code>« Ajoute les tests xUnit sur l'<span class="c-fn">upsert</span> d'un code d'identification :
+cas nominal (200), <span class="c-key">code en doublon rejeté</span>, code vide (400).
+Fais-les passer. »</code></pre>
+    <h3>Ce qu'il déroule, seul</h3>
+    <ul>
+      <li><b>Lit</b> <code>recall-identification-code-management.service.ts</code> (contrat <code>upsert</code>) + le handler/controller côté API</li>
+      <li><b>Planifie</b> : 3 cas manquants, repère qu'il faut mocker <code>IMediator</code> (dispatch CQRS)</li>
+      <li><b>Écrit</b> les tests (Arrange/Act/Assert, <code>Theory</code>/<code>Fact</code>)</li>
+      <li><b>Lance</b> <code class="c-cmd">dotnet test</code> → lit la sortie</li>
+      <li>1 rouge : le doublon n'est <b>pas</b> rejeté (aucun contrôle d'unicité) → révèle le vrai bug</li>
+    </ul>
+    <p style="margin-top:14px">Ce que ça t'enlève : le boilerplate de test et les aller-retours d'erreurs.
+    Ce que ça ne t'enlève pas : <b>décider si les cas testés sont les bons</b>. Ici le test rouge pointe direct l'origine du crash d'import. Tu relis le diff.</p>
+  </section>
+
+  <!-- ===================== 2. CLAUDE CODE ===================== -->
+  <section class="slide center">
+    <div class="kicker">Temps 2 / 4</div>
+    <h1>Claude Code</h1>
+    <p class="big muted">Où ça vit, et ce que ça remplace</p>
+  </section>
+
+  <section class="slide">
+    <h2>Le problème</h2>
+    <div class="card problem">
+      <span class="badge p">Vécu</span>
+      <p style="margin-top:8px">L'IA est dans un onglet à côté, aveugle à ton projet. Tu fais le facteur :
+      copier le fichier, coller la réponse, traduire le contexte à la main. Tout le contexte de ton repo reste hors de portée.</p>
+    </div>
+    <h3>La solution : l'agent vit là où tu travailles</h3>
+    <div class="pill-row">
+      <span class="tag">Terminal</span><span class="tag">IDE (VS Code / JetBrains)</span><span class="tag">Application bureau</span>
+    </div>
+    <ul>
+      <li>Accès au <b>dépôt</b> : lit l'arborescence et les fichiers</li>
+      <li><b>Modifie</b> les fichiers, <b>lance</b> les commandes du projet (<code>dotnet</code>, <code>ng</code>)</li>
+      <li>Démarrage : <code class="c-cmd">claude</code> à la racine du repo</li>
+      <li><b>Reste cadré</b> : branche dédiée, tests obligatoires, validation humaine</li>
+    </ul>
+  </section>
+
+  <section class="slide">
+    <h2>3 cas qu'on rencontre cette semaine</h2>
+    <h3>1 · Ajouter une fonctionnalité</h3>
+    <pre><code><span class="c-cmd">claude</span>
+&gt; Ajoute un champ « date de retour » au formulaire de <span class="c-fn">recall-form.component.ts</span>.
+  Il doit être obligatoire et affiché dans le tableau. Mets à jour le
+  formulaire, le template et le test, puis lance <span class="c-cmd">ng test</span>.</code></pre>
+    <p class="muted" style="margin-top:8px">Il édite le <code>.ts</code>, le <code>.html</code>, le <code>.spec.ts</code>, lance les tests, corrige si rouge.</p>
+  </section>
+
+  <section class="slide">
+    <h2>3 cas qu'on rencontre cette semaine</h2>
+    <h3>2 · Comprendre du code legacy</h3>
+    <pre><code>&gt; Explique-moi le flux de dépôt CSV dans <span class="c-fn">deposit-upload.component.ts</span> :
+  <span class="c-fn">onBeforeUpload</span> → depositGenerateUrl → upload Azure Blob → sendReport.
+  Dessine le flux de données et les transitions de statut du dépôt
+  en <span class="c-key">mermaid</span>.</code></pre>
+    <h3>3 · Onboarding backend (pour profils Angular)</h3>
+    <pre><code>&gt; Je viens d'Angular. Côté API, explique l'endpoint
+  <span class="c-fn">/api/constructor/deposit/generate-url</span> ligne à ligne :
+  injection de dépendances, dispatch <span class="c-key">MediatR</span>, et où sont gérés
+  les codes de retour <span class="c-str">200/404/400</span>.</code></pre>
+    <p class="muted" style="margin-top:10px">Objectif : accélérer la compréhension entre front Angular (<code>recall-service.ts</code>) et API C# (CQRS / MediatR).</p>
+  </section>
+
+  <section class="slide">
+    <h2>Mini scénario agentique (live, 5 min)</h2>
+    <p class="muted">Prompt unique, simple, front + back — feature « limite de dépôts » :</p>
+    <pre><code>&gt; Quand l'API refuse un dépôt avec un <span class="c-num">429</span> (limite atteinte),
+  affiche un message clair à l'utilisateur dans le <span class="c-key">catch</span> de
+  <span class="c-fn">onBeforeUpload</span> (deposit-upload.component.ts) au lieu de juste logger.
+  Renvoie ce 429 côté C# quand la limite est dépassée. Ajoute 1 test xUnit
+  et 1 test Angular, puis lance <span class="c-cmd">dotnet test</span> et
+  <span class="c-cmd">ng test --include deposit-upload</span>.</code></pre>
+    <h3>Ce qu'on observe en direct</h3>
+    <div class="loop" style="margin-top:10px">
+      <div class="step"><b>1</b><br>Il lit <code>recall-service.ts</code> + <code>onBeforeUpload</code></div>
+      <div class="step"><b>2</b><br>Il propose un plan</div>
+      <div class="step"><b>3</b><br>Il code et teste</div>
+      <div class="step"><b>4</b><br>Il corrige si rouge</div>
+      <div class="step"><b>5</b><br>Tu relis le diff</div>
+    </div>
+    <p class="muted" style="margin-top:10px">Simple, borné, mesurable : parfait pour une première démo agentique.</p>
+  </section>
+
+  <!-- ===================== 3. SKILLS ===================== -->
+  <section class="slide center">
+    <div class="kicker">Temps 3 / 4</div>
+    <h1>Les Skills</h1>
+    <p class="big muted">Apprendre nos conventions une fois pour toutes</p>
+  </section>
+
+  <section class="slide">
+    <h2>Le problème</h2>
+    <div class="card problem">
+      <span class="badge p">Vécu</span>
+      <p style="margin-top:8px">À chaque session tu réexpliques : « nos commits suivent Conventional Commits »,
+      « nos revues vérifient X, Y, Z », « notre checklist de release c'est… ». Ou alors tu mets <b>tout</b>
+      dans un gros fichier de règles que l'agent traîne en permanence → coût en tokens, bruit.</p>
+    </div>
+    <h3>Skill = un savoir-faire chargé à la demande</h3>
+    <p>Un dossier avec un fichier <code>SKILL.md</code> : un frontmatter YAML (<code>name</code> + <code>description</code>),
+    puis des instructions en markdown. L'agent ne charge le contenu <b>que</b> si la <code>description</code>
+    correspond à la tâche → <b>chargement progressif</b>, coût quasi nul le reste du temps.</p>
+  </section>
+
+  <section class="slide">
+    <h2>CLAUDE.md vs Skill — ne pas confondre</h2>
+    <div class="cols">
+      <div class="col card">
+        <h3 style="margin-top:0">CLAUDE.md</h3>
+        <p><b>Toujours chargé.</b> Les règles non négociables du repo.</p>
+        <pre><code><span class="c-com"># CLAUDE.md</span>
+- Ne jamais committer de <span class="c-str">.env</span>
+- Tests obligatoires avant tout commit
+- Réponses en français</code></pre>
+      </div>
+      <div class="col card">
+        <h3 style="margin-top:0">Skill</h3>
+        <p><b>Chargé à la demande.</b> Un savoir-faire précis, quand c'est pertinent.</p>
+        <pre><code><span class="c-com"># .claude/skills/code-review/</span>
+Comment on écrit une revue
+de code <span class="c-key">ici</span> — chargé seulement
+quand on demande une revue.</code></pre>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:12px">Règle simple : <b>toujours vrai</b> → CLAUDE.md. <b>Vrai pour une tâche précise</b> → Skill.</p>
+  </section>
+
+  <section class="slide">
+    <h2>Un Skill réaliste · convention de commit</h2>
+    <pre><code><span class="c-com"># .claude/skills/git-commit/SKILL.md</span>
+<span class="c-key">---</span>
+<span class="c-fn">name</span>: git-commit
+<span class="c-fn">description</span>: Rédige les messages de commit de l'équipe.
+  À utiliser dès qu'on prépare ou écrit un commit.
+<span class="c-key">---</span>
+
+<span class="c-com"># Convention de commit</span>
+- Format Conventional Commits : <span class="c-str">type(scope): sujet</span>
+- Types : feat, fix, refactor, test, chore, docs
+- Sujet à l'impératif, &lt; 72 caractères, en français
+- Corps : le <span class="c-key">pourquoi</span>, pas le quoi
+- Référencer le ticket : <span class="c-str">Refs #1234</span>
+
+<span class="c-com">## Exemple</span>
+<span class="c-str">feat(deposit): affiche un message clair sur refus 429
+
+Gère la limite de dépôts atteinte dans onBeforeUpload
+au lieu de simplement journaliser l'erreur. Refs #482</span></code></pre>
+  </section>
+
+  <section class="slide">
+    <h2>Pourquoi c'est puissant en équipe</h2>
+    <ul>
+      <li>Un Skill projet vit dans <code>.claude/skills/</code> → il se <b>versionne dans git</b></li>
+      <li>Tu l'écris une fois, <b>toute l'équipe</b> (et l'agent de chacun) l'a au prochain pull</li>
+      <li>Le savoir tacite (« comment on fait ici ») devient explicite et révisable en PR</li>
+      <li>Idées immédiates : <span class="tag">checklist de release</span><span class="tag">style de revue C#</span><span class="tag">format de commit</span><span class="tag">conventions Angular</span></li>
+    </ul>
+    <div class="card solution" style="margin-top:14px">
+      <span class="badge s">Le déclic</span>
+      <p style="margin-top:8px">L'onboarding d'un nouveau passe en partie de « lis ce wiki de 40 pages »
+      à « l'agent connaît déjà nos conventions, parce qu'elles sont dans le repo ».</p>
+    </div>
+  </section>
+
+  <!-- ===================== 4. MCP ===================== -->
+  <section class="slide center">
+    <div class="kicker">Temps 4 / 4</div>
+    <h1>MCP</h1>
+    <p class="big muted">Model Context Protocol — brancher l'agent sur nos outils</p>
+  </section>
+
+  <section class="slide">
+    <h2>Le problème</h2>
+    <div class="card problem">
+      <span class="badge p">Vécu</span>
+      <p style="margin-top:8px">L'agent sait coder, mais il est isolé. Le ticket est dans GitHub/Jira, l'erreur dans
+      le monitoring, le board ailleurs. Toi tu fais la navette : lire le ticket, recopier le contexte,
+      ouvrir la PR à la main, mettre le board à jour.</p>
+    </div>
+    <h3>Skill vs MCP — la distinction nette</h3>
+    <table>
+      <tr><th>Skill</th><th>Serveur MCP</th></tr>
+      <tr><td>Dit <b>COMMENT</b> se comporter</td><td>Donne de <b>NOUVELLES capacités</b></td></tr>
+      <tr><td>Des instructions (markdown)</td><td>Des outils / connexions externes</td></tr>
+      <tr><td>« écris le commit comme ça »</td><td>« lis l'issue, ouvre la PR »</td></tr>
+    </table>
+  </section>
+
+  <section class="slide">
+    <h2>Ce que MCP débloque pour ce public</h2>
+    <div class="cols">
+      <div class="col">
+        <h3>Pour les devs</h3>
+        <ul>
+          <li>Lire / créer des <b>issues GitHub</b></li>
+          <li><b>Ouvrir une PR</b> dans la foulée</li>
+          <li>Interroger une <b>base de données</b></li>
+          <li>Remonter les <b>erreurs</b> depuis le monitoring (Sentry…)</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h3>Pour le chef de projet</h3>
+        <ul>
+          <li><b>Synchroniser un board</b> (Jira / Linear)</li>
+          <li>Générer un point d'avancement depuis les tickets</li>
+          <li>Lier PR ↔ ticket automatiquement</li>
+        </ul>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:14px">Un serveur MCP s'ajoute une fois (config projet), puis l'agent l'utilise comme des outils natifs.</p>
+  </section>
+
+  <section class="slide">
+    <h2>Le déclic · du ticket à la PR, d'un trait</h2>
+    <pre><code>&gt; Prends l'issue <span class="c-num">#482</span>, implémente-la, et ouvre une PR.</code></pre>
+    <div class="loop" style="margin-top:14px">
+      <div class="step"><b>Lit</b> l'issue #482 <span class="muted">(MCP GitHub)</span></div>
+      <span class="arrow">→</span>
+      <div class="step"><b>Écrit</b> le code <span class="muted">(Claude Code)</span></div>
+      <span class="arrow">→</span>
+      <div class="step"><b>Lance</b> les tests <span class="muted">(dotnet/ng)</span></div>
+      <span class="arrow">→</span>
+      <div class="step"><b>Ouvre</b> la PR liée <span class="muted">(MCP GitHub)</span></div>
+    </div>
+    <h3>Orchestration en action</h3>
+    <p class="muted">L'agent enchaîne les outils dans un ordre précis : lire l'issue, coder, tester, ouvrir la PR. Le harnais fixe les limites, toi tu valides le résultat.</p>
+    <div class="card solution" style="margin-top:16px">
+      <span class="badge s">Note</span>
+      <p style="margin-top:6px">Agentique + Claude Code + Skill (le commit/PR au format équipe) + MCP (GitHub) :
+      les 4 temps s'assemblent ici. Tu restes le relecteur de la PR.</p>
+    </div>
+  </section>
+
+  <!-- ===================== LIMITES / OBJECTIONS ===================== -->
+  <section class="slide">
+    <h2>Limites et harnais : garder le contrôle</h2>
+    <div class="cols">
+      <div class="col">
+        <h3>Le harnais en 3 étapes</h3>
+        <ul>
+          <li><b>Pré-vol :</b> l'agent annonce les fichiers qu'il compte modifier</li>
+          <li><b>Exécution :</b> branche dédiée, tests obligatoires, pas de commit automatique</li>
+          <li><b>Post-vol :</b> résumé du diff + statut clair des tests</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h3>Signaux à surveiller</h3>
+        <ul>
+          <li><b>Vert :</b> scope respecté, tests en hausse</li>
+          <li><b>Orange :</b> fichiers inattendus, boucles longues</li>
+          <li><b>Rouge :</b> modifications de tests pour masquer le bug</li>
+        </ul>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:12px">Ce cadre évite le mode « IA en roue libre ». L'agent accélère, l'humain décide.</p>
+  </section>
+
+  <section class="slide">
+    <h2>Objections fréquentes / réponses</h2>
+    <table>
+      <tr><th>Objection</th><th>Réponse nuancée</th></tr>
+      <tr><td><b>« Et la sécurité de notre code ? »</b></td>
+          <td>À cadrer : périmètre d'accès au repo, ce qui sort ou non, paramètres réseau/entreprise. À valider avec qui gère ces réglages avant un usage large.</td></tr>
+      <tr><td><b>« C'est fiable ? »</b></td>
+          <td>Pas infaillible. Mais la boucle <b>tests</b> rattrape beaucoup : il voit le rouge et corrige. Fiabilité = bon cadrage + relecture, pas confiance aveugle.</td></tr>
+      <tr><td><b>« Ça remplace les devs ? »</b></td>
+          <td>Non. Ça enlève le répétitif (boilerplate, migrations mécaniques, tests manquants). Le jugement — quoi construire, quels cas tester, quelles décisions d'archi — reste à nous.</td></tr>
+    </table>
+  </section>
+
+  <!-- ===================== ACTIONS ===================== -->
+  <section class="slide">
+    <h2>3 actions pour tester dès cet après-midi</h2>
+    <p class="muted">Par effort croissant.</p>
+    <div class="card" style="border-left:4px solid var(--green)">
+      <span class="num">1</span><b>5 min — une question de compréhension</b>
+      <p style="margin-top:6px">Lancer <code class="c-cmd">claude</code> dans le repo Recall et demander :
+      « Explique le flux de <code>deposit-upload.component.ts</code> et dessine-le en mermaid ». Zéro risque, lecture seule.</p>
+    </div>
+    <div class="card" style="border-left:4px solid var(--yellow)">
+      <span class="num">2</span><b>30 min — une tâche réelle sur une branche</b>
+      <p style="margin-top:6px">« Ajoute le contrôle d'unicité du <code>code</code> d'identification (formulaire + API) et le test qui rejette un doublon ».
+      Tu gardes le harnais : scope borné, branche dédiée, review du diff.</p>
+    </div>
+    <div class="card" style="border-left:4px solid var(--accent2)">
+      <span class="num">3</span><b>1 h — un Skill d'équipe + un MCP</b>
+      <p style="margin-top:6px">Écrire un <code>SKILL.md</code> de convention de commit, le pousser dans <code>.claude/skills/</code>,
+      brancher le MCP GitHub et tenter « issue #X → PR » sur un petit ticket.</p>
+    </div>
+  </section>
+
+  <section class="slide center">
+    <h1>En une phrase</h1>
+    <p class="big">On passe d'une IA qui <span class="muted">répond</span> à une IA qui <b style="color:var(--green)">fait</b> —<br>dans notre repo, avec nos conventions, branchée sur nos outils, et orchestrée avec un harnais clair.</p>
+    <p class="muted" style="margin-top:24px">… et avec nous comme relecteurs. On teste cet après-midi ?</p>
+  </section>
+
+</div>
+
+<footer>
+  <span>Claude Code · démo interne</span>
+  <span id="counter">1 / 1</span>
+</footer>
+<div class="hint">← → pour naviguer · F plein écran</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  let i=0;
+  const counter=document.getElementById('counter');
+  const bar=document.getElementById('bar');
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    counter.textContent=(i+1)+' / '+slides.length;
+    bar.style.width=((i+1)/slides.length*100)+'%';
+  }
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ') show(i+1);
+    else if(e.key==='ArrowLeft'||e.key==='PageUp') show(i-1);
+    else if(e.key==='Home') show(0);
+    else if(e.key==='End') show(slides.length-1);
+    else if(e.key.toLowerCase()==='f'){ if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+  });
+  document.addEventListener('click',e=>{ if(e.clientX > window.innerWidth*0.5) show(i+1); else show(i-1); });
+  show(0);
+</script>
+</body>
+</html>

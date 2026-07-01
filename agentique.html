@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L'agentique — orchestrer des agents & apprivoiser l'IA</title>
+<style>
+  :root{
+    --bg:#0d1117; --bg2:#161b22; --bg3:#1c2230; --card:#161b22;
+    --border:#283040; --txt:#e6edf3; --muted:#9aa7b8; --accent:#58a6ff;
+    --accent2:#7ee787; --warn:#f0883e; --bad:#ff7b72; --good:#3fb950;
+    --code:#1f2733;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.65;font-size:16px;
+  }
+  .layout{display:flex;max-width:1280px;margin:0 auto}
+  /* Sidebar */
+  nav.side{
+    position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;
+    width:280px;flex-shrink:0;padding:28px 18px;border-right:1px solid var(--border);
+    background:var(--bg2);
+  }
+  nav.side .brand{font-weight:800;font-size:1.05rem;letter-spacing:.3px;margin-bottom:4px}
+  nav.side .brand span{color:var(--accent)}
+  nav.side .sub{color:var(--muted);font-size:.78rem;margin-bottom:22px}
+  nav.side a{
+    display:block;color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:8px;
+    font-size:.88rem;margin-bottom:2px;border-left:2px solid transparent;
+  }
+  nav.side a:hover{background:var(--bg3);color:var(--txt)}
+  nav.side a .n{color:var(--accent);font-variant-numeric:tabular-nums;margin-right:8px;font-size:.8rem}
+  /* Main */
+  main{flex:1;min-width:0;padding:48px 56px 120px}
+  header.hero{margin-bottom:54px}
+  header.hero h1{font-size:2.3rem;line-height:1.15;margin:0 0 14px;font-weight:800}
+  header.hero h1 span{color:var(--accent)}
+  header.hero p.lead{color:var(--muted);font-size:1.08rem;max-width:820px;margin:0}
+  .tagline{display:inline-block;background:var(--bg3);border:1px solid var(--border);
+    color:var(--accent2);font-size:.74rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+    padding:5px 12px;border-radius:999px;margin-bottom:18px}
+  section{margin-bottom:64px;scroll-margin-top:24px}
+  section h2{font-size:1.6rem;margin:0 0 6px;padding-bottom:10px;border-bottom:1px solid var(--border);font-weight:800}
+  section h2 .num{color:var(--accent);font-size:1.1rem;margin-right:10px;font-variant-numeric:tabular-nums}
+  section h3{font-size:1.18rem;margin:32px 0 10px;font-weight:700;color:var(--txt)}
+  section h4{font-size:1rem;margin:22px 0 6px;font-weight:700;color:var(--accent2)}
+  p{margin:0 0 14px}
+  .muted{color:var(--muted)}
+  strong{color:#fff}
+  a.inline{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(88,166,255,.3)}
+  a.inline:hover{border-bottom-color:var(--accent)}
+  code{background:var(--code);padding:2px 6px;border-radius:5px;font-size:.86em;
+    font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;color:#9ad8ff}
+  pre{background:var(--code);border:1px solid var(--border);border-radius:10px;padding:16px 18px;
+    overflow-x:auto;font-size:.84rem;line-height:1.5;margin:0 0 16px}
+  pre code{background:none;padding:0;color:#c9d6e4}
+  /* cards / grids */
+  .grid{display:grid;gap:16px;margin:16px 0}
+  .grid.c2{grid-template-columns:1fr 1fr}
+  .grid.c3{grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px}
+  .card h4{margin-top:0}
+  /* callouts */
+  .note{border-left:3px solid var(--accent);background:var(--bg3);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0}
+  .note.warn{border-color:var(--warn)}
+  .note.good{border-color:var(--good)}
+  .note.bad{border-color:var(--bad)}
+  .note .t{font-weight:700;display:block;margin-bottom:4px}
+  /* tables */
+  .tablewrap{overflow-x:auto;margin:18px 0;border:1px solid var(--border);border-radius:var(--radius)}
+  table{border-collapse:collapse;width:100%;font-size:.9rem}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+  th{background:var(--bg3);font-weight:700;color:#fff;white-space:nowrap;font-size:.82rem;text-transform:uppercase;letter-spacing:.4px}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:rgba(88,166,255,.05)}
+  td .pill{font-size:.72rem;padding:2px 8px;border-radius:999px;font-weight:700;white-space:nowrap}
+  .pill.green{background:rgba(63,185,80,.15);color:var(--good)}
+  .pill.orange{background:rgba(240,136,62,.15);color:var(--warn)}
+  .pill.red{background:rgba(255,123,114,.15);color:var(--bad)}
+  .pill.blue{background:rgba(88,166,255,.15);color:var(--accent)}
+  /* pros cons */
+  ul.clean{list-style:none;padding:0;margin:0}
+  ul.clean li{padding:5px 0 5px 26px;position:relative}
+  ul.clean li::before{position:absolute;left:0;top:4px;font-weight:800}
+  ul.pro li::before{content:"+";color:var(--good)}
+  ul.con li::before{content:"\2013";color:var(--bad)}
+  ul.dot li::before{content:"\25B8";color:var(--accent)}
+  ul.arrow li::before{content:"\2192";color:var(--accent2)}
+  /* steps */
+  .steps{counter-reset:s;margin:18px 0}
+  .step{position:relative;padding:4px 0 18px 56px;border-left:2px solid var(--border);margin-left:18px}
+  .step:last-child{border-left:2px solid transparent}
+  .step::before{counter-increment:s;content:counter(s);position:absolute;left:-19px;top:0;
+    width:38px;height:38px;border-radius:50%;background:var(--bg3);border:1px solid var(--accent);
+    color:var(--accent);font-weight:800;display:flex;align-items:center;justify-content:center}
+  .step h4{margin:6px 0 4px}
+  /* level ladder */
+  .levels{counter-reset:lv;margin:18px 0}
+  .lvl{position:relative;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent);
+    border-radius:0 10px 10px 0;padding:16px 20px 16px 66px;margin-bottom:14px}
+  .lvl::before{counter-increment:lv;content:"L" counter(lv);position:absolute;left:14px;top:16px;
+    font-weight:800;color:var(--accent);font-size:1.05rem;letter-spacing:.5px}
+  .lvl h4{margin:0 0 4px;color:var(--txt);font-size:1.05rem}
+  .lvl .tools{margin-top:8px}
+  .toolchip{display:inline-block;background:var(--bg3);border:1px solid var(--border);color:var(--accent2);
+    font-size:.72rem;font-weight:600;padding:3px 9px;border-radius:999px;margin:3px 5px 0 0}
+  footer{border-top:1px solid var(--border);padding-top:24px;color:var(--muted);font-size:.85rem}
+  .quote{border-left:3px solid var(--warn);padding:6px 0 6px 18px;margin:16px 0;font-style:italic;color:#d7e0ec}
+  .backlink{display:inline-block;margin-bottom:26px;color:var(--muted);text-decoration:none;font-size:.85rem}
+  .backlink:hover{color:var(--accent)}
+  @media(max-width:920px){
+    nav.side{display:none}
+    main{padding:28px 20px 80px}
+    .grid.c2,.grid.c3{grid-template-columns:1fr}
+    header.hero h1{font-size:1.8rem}
+  }
+</style>
+</head>
+<body>
+<nav class="xnav" aria-label="Navigation entre les pages">
+  <a href="index.html">Quiz</a>
+  <a href="claude-code-presentation.html">Claude Code</a>
+  <a href="agentique.html" aria-current="page">Agentique</a>
+  <a href="ia-locale-rag.html">IA locale &amp; RAG</a>
+</nav>
+<style>
+.xnav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;gap:6px;padding:6px 8px;background:rgba(20,20,25,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);border-radius:999px;font:500 13px/1 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.xnav a{color:#dfe3ea;text-decoration:none;padding:6px 12px;border-radius:999px;white-space:nowrap}
+.xnav a:hover{background:rgba(255,255,255,.12);color:#fff}
+.xnav a[aria-current="page"]{background:#6c5ce7;color:#fff}
+@media(max-width:560px){.xnav{font-size:12px;flex-wrap:wrap;justify-content:center;bottom:8px;max-width:94vw}}
+</style>
+<div class="layout">
+  <nav class="side">
+    <div class="brand">L'<span>agentique</span></div>
+    <div class="sub">Orchestrer des agents & apprivoiser l'IA</div>
+    <a href="#lexique"><span class="n">§</span>Lexique</a>
+    <a href="#petit"><span class="n">1</span>Commencer petit (3-4 agents)</a>
+    <a href="#worktrees"><span class="n">2</span>GitHub worktrees</a>
+    <a href="#orchestration"><span class="n">3</span>Niveaux d'orchestration</a>
+    <a href="#reste"><span class="n">4</span>Ce qui va rester</a>
+    <a href="#apprivoiser"><span class="n">5</span>Apprivoiser l'IA</a>
+    <a href="#frontieres"><span class="n">6</span>Frontières entre postes</a>
+    <a href="#sadin"><span class="n">7</span>Eric Sadin — la critique</a>
+    <a href="#strategie"><span class="n">8</span>Réflexion stratégique</a>
+    <a href="#juniors"><span class="n">9</span>Former les juniors</a>
+    <a href="#societe"><span class="n">10</span>Enjeu de société & IA locale</a>
+    <a href="#outils"><span class="n">11</span>La différence des outils</a>
+    <a href="#pour-lia"><span class="n">12</span>Outils POUR l'IA vs rafistolage</a>
+  </nav>
+
+  <main>
+    <a href="index.html" class="backlink">← Retour</a>
+    <header class="hero">
+      <span class="tagline">Orchestration · usages · enjeux</span>
+      <h1>L'<span>agentique</span> : faire travailler des agents,<br>et faire travailler les humains <em>avec</em> eux</h1>
+      <p class="lead">Passer d'un agent isolé à plusieurs agents qui collaborent, sans se noyer. Les niveaux d'orchestration et les outils qui les servent, ce qui restera structurel quoi qu'il arrive — puis la vraie question : comment chaque salarié apprivoise l'IA sans se faire remplacer, et pourquoi cet enjeu dépasse largement le code.</p>
+    </header>
+
+    <!-- ===================== LEXIQUE ===================== -->
+    <section id="lexique">
+      <h2><span class="num">§</span>Lexique</h2>
+      <p class="muted">Les mots-clés de la page, en une ligne. À garder ouvert à côté.</p>
+      <div class="tablewrap">
+      <table>
+        <thead><tr><th style="width:22%">Terme</th><th>Définition</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Agent</strong></td><td>Un LLM à qui on donne des <strong>outils</strong> (lire/écrire des fichiers, lancer des commandes) et qui <strong>agit en boucle</strong> jusqu'à un résultat, au lieu de juste répondre.</td></tr>
+          <tr><td><strong>Orchestration</strong></td><td>La façon d'enchaîner et de coordonner un ou plusieurs agents : qui fait quoi, dans quel ordre, avec quelles limites, et comment on récupère les résultats.</td></tr>
+          <tr><td><strong>Sub-agent</strong></td><td>Un agent lancé <strong>par</strong> un autre agent pour une sous-tâche délimitée (recherche, revue…), avec son propre contexte, qui rend son résultat à l'agent principal.</td></tr>
+          <tr><td><strong>Worktree</strong></td><td>Une copie de travail Git supplémentaire du même dépôt, sur une <strong>branche isolée</strong>. Permet à plusieurs agents de bosser en parallèle sans se marcher dessus.</td></tr>
+          <tr><td><strong>Vibe coding</strong></td><td>Produire un logiciel en décrivant l'intention en langage naturel et en laissant l'IA écrire le code — sans forcément écrire une ligne soi-même.</td></tr>
+          <tr><td><strong>TDD</strong></td><td><em>Test-Driven Development</em> — écrire le test <strong>avant</strong> le code. Donne à l'agent un critère objectif de réussite (le test passe ou non).</td></tr>
+          <tr><td><strong>MCP</strong></td><td><em>Model Context Protocol</em> : un standard pour brancher un agent sur des outils externes (GitHub, base de données, monitoring…).</td></tr>
+          <tr><td><strong>Harnais</strong></td><td>Le cadre de contrôle autour des agents : branches dédiées, tests obligatoires, pas de commit auto, relecture humaine. Il empêche l'« IA en roue libre ».</td></tr>
+          <tr><td><strong>Augmenter vs remplacer</strong></td><td>Deux visées opposées de l'IA au travail : <strong>augmenter</strong> = rendre l'humain meilleur/plus rapide ; <strong>remplacer</strong> = faire à sa place. Le même outil peut servir les deux.</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </section>
+
+    <!-- ===================== 1 — COMMENCER PETIT ===================== -->
+    <section id="petit">
+      <h2><span class="num">1</span>Commencer petit : 3 ou 4 agents maximum</h2>
+      <p>La tentation, quand on découvre le multi-agent, c'est d'en lancer dix. Erreur. Chaque agent supplémentaire ajoute du <strong>coût</strong>, du <strong>contexte à suivre</strong> et des <strong>points de collision</strong>. Au-delà de 3-4 agents actifs en parallèle, un humain seul ne peut plus vraiment savoir ce qui se passe — et l'intérêt s'effondre.</p>
+
+      <div class="grid c2">
+        <div class="card">
+          <h4>Pourquoi se limiter</h4>
+          <ul class="clean con">
+            <li><strong>Charge cognitive.</strong> Vous restez le relecteur. 4 diffs à valider, c'est gérable ; 10, non.</li>
+            <li><strong>Coût.</strong> Chaque agent consomme des tokens en continu. Le parallélisme se paie.</li>
+            <li><strong>Collisions.</strong> Plusieurs agents sur les mêmes fichiers = conflits, écrasements, travail perdu.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>La bonne maille de départ</h4>
+          <ul class="clean pro">
+            <li><strong>1 agent principal</strong> qui pilote et à qui vous parlez.</li>
+            <li><strong>2-3 sub-agents</strong> spécialisés et bornés (explorer, coder, relire).</li>
+            <li>Des tâches <strong>indépendantes</strong> : chacun sur son périmètre, idéalement son <a href="#worktrees" class="inline">worktree</a>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note good">
+        <span class="t">Règle pratique</span>
+        Monter en nombre d'agents seulement quand vous avez rendu leur travail <strong>observable</strong> et <strong>isolé</strong>. Le nombre d'agents que vous pouvez piloter = le nombre de résultats que vous pouvez réellement relire et arbitrer.
+      </div>
+    </section>
+
+    <!-- ===================== 2 — WORKTREES ===================== -->
+    <section id="worktrees">
+      <h2><span class="num">2</span>Utiliser les GitHub / Git worktrees</h2>
+      <p>Le mécanisme concret qui rend le parallélisme sain. Un <strong>worktree</strong> Git, c'est une seconde (troisième…) copie de travail du <strong>même dépôt</strong>, rattachée à une <strong>branche différente</strong>. Chaque agent travaille dans son worktree, sur sa branche, sans jamais toucher au dossier des autres.</p>
+
+      <h3>Le problème qu'ils résolvent</h3>
+      <p>Sans worktree, deux agents dans le même dossier éditent les mêmes fichiers en même temps : l'un écrase l'autre, les tests d'un agent tournent sur le code de l'autre, le diff devient illisible. Avec worktrees, chacun a un <strong>bac à sable réel</strong> — même historique Git, dossiers séparés.</p>
+
+      <pre><code><span style="color:#8b949e"># Un worktree par tâche/agent, chacun sur sa branche</span>
+git worktree add ../recall-feat-429   feat/limite-429
+git worktree add ../recall-migration  refactor/rxjs-signals
+git worktree add ../recall-tests      test/upsert-unicite
+
+<span style="color:#8b949e"># chaque agent est lancé à la racine de SON worktree</span>
+<span style="color:#3fb950">cd</span> ../recall-feat-429 && claude
+</code></pre>
+
+      <div class="grid c2">
+        <div class="card">
+          <h4>Ce que ça débloque</h4>
+          <ul class="clean pro">
+            <li>Vrai parallélisme : 3 agents, 3 branches, zéro collision.</li>
+            <li>Isolation des tests : chaque agent teste <em>son</em> code.</li>
+            <li>Une PR propre par worktree, relue indépendamment.</li>
+            <li>Rollback trivial : on jette le worktree, le dépôt reste intact.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Le harnais qui va avec</h4>
+          <ul class="clean dot">
+            <li>Une branche <strong>dédiée</strong> par worktree, jamais <code>main</code>.</li>
+            <li>Tests obligatoires avant toute proposition de merge.</li>
+            <li>Vous relisez et fusionnez les branches <strong>une par une</strong>.</li>
+            <li>Nettoyage : <code>git worktree remove</code> quand c'est fusionné.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="muted">Certaines interfaces d'agents créent et nettoient le worktree automatiquement (mode « isolation worktree »). Le principe reste le même : <strong>un espace de travail Git isolé par agent</strong>.</p>
+
+      <div class="note good">
+        <span class="t">Le merge reste une décision humaine</span>
+        Les agents produisent des branches ; ils ne décident <strong>pas</strong> de les fusionner. La décision de <em>merger</em> — accepter ce travail dans la base commune — revient à l'humain. Ce n'est pas une formalité : c'est le moment où l'on <strong>exerce son jugement</strong> — relire le diff, arbitrer entre deux branches concurrentes, refuser ce qui ne tient pas. Les worktrees isolent l'exécution justement pour laisser ce point de contrôle intact. L'agent accélère ; <a href="#frontieres" class="inline">la décision et la responsabilité restent nôtres</a>.
+      </div>
+    </section>
+
+    <!-- ===================== 3 — NIVEAUX D'ORCHESTRATION ===================== -->
+    <section id="orchestration">
+      <h2><span class="num">3</span>Les niveaux d'orchestration (du plus simple au plus avancé)</h2>
+      <p>« Orchestrer des agents » n'est pas une seule chose. C'est une échelle. Chaque niveau répond à une question précise, et se sert d'outils différents. On peut lire cette échelle comme une progression : on ne monte qu'une fois le niveau précédent maîtrisé.</p>
+
+      <div class="levels">
+
+        <div class="lvl">
+          <h4>Le chemin système — donner à l'agent l'accès au monde réel</h4>
+          <p class="muted">Le socle. Un agent n'est utile que branché sur un vrai environnement : système de fichiers, terminal, réseau, outils du projet. C'est le « chemin » par lequel il lit et agit. Sans lui, on a un chatbot ; avec lui, un agent.</p>
+          <p><strong>La question :</strong> qu'est-ce que l'agent a le droit de lire, d'exécuter, d'atteindre ?</p>
+          <div class="tools">
+            <span class="toolchip">shell / terminal</span><span class="toolchip">accès fichiers</span><span class="toolchip">Claude Code</span><span class="toolchip">Codex CLI</span><span class="toolchip">MCP (outils externes)</span>
+          </div>
+        </div>
+
+        <div class="lvl">
+          <h4>Faire collaborer plusieurs agents</h4>
+          <p class="muted">Découper une grosse tâche entre agents spécialisés qui se passent des résultats : un explore, un code, un relit. Un agent « chef » coordonne et agrège. C'est ici que <a href="#worktrees" class="inline">les worktrees</a> et la règle des <a href="#petit" class="inline">3-4 agents</a> comptent le plus.</p>
+          <p><strong>La question :</strong> qui fait quoi, dans quel ordre, et comment on recolle les morceaux ?</p>
+          <div class="tools">
+            <span class="toolchip">sub-agents</span><span class="toolchip">agent « orchestrateur »</span><span class="toolchip">LangGraph</span><span class="toolchip">CrewAI</span><span class="toolchip">AutoGen</span><span class="toolchip">OpenAI Agents SDK</span>
+          </div>
+        </div>
+
+        <div class="lvl">
+          <h4>Construire au plus près du modèle</h4>
+          <p class="muted">Descendre d'un cran : au lieu d'assembler des briques toutes faites, on pilote directement le modèle et ses appels d'outils. Plus de contrôle sur le prompt, le format, la boucle, le coût — au prix de plus de code. Pour les cas où les frameworks « clé en main » sont trop rigides.</p>
+          <p><strong>La question :</strong> ai-je besoin d'un contrôle fin de la boucle, ou une abstraction suffit ?</p>
+          <div class="tools">
+            <span class="toolchip">Claude Agent SDK</span><span class="toolchip">API tool-use</span><span class="toolchip">appels bruts au modèle</span><span class="toolchip">llama.cpp / serveur local</span>
+          </div>
+        </div>
+
+        <div class="lvl">
+          <h4>Orchestrer sans code (low-code / no-code)</h4>
+          <p class="muted">À l'inverse : assembler des workflows d'agents visuellement, sans programmer. Pour prototyper vite, ou pour donner l'orchestration à des profils non-développeurs (métier, chef de projet). Puissant pour connecter des services entre eux.</p>
+          <p><strong>La question :</strong> qui va construire et maintenir le workflow — un dev, ou une équipe métier ?</p>
+          <div class="tools">
+            <span class="toolchip">n8n</span><span class="toolchip">Make</span><span class="toolchip">Zapier</span><span class="toolchip">Flowise</span><span class="toolchip">Dify</span><span class="toolchip">Langflow</span>
+          </div>
+        </div>
+
+        <div class="lvl">
+          <h4>Survivre aux pannes</h4>
+          <p class="muted">Un agent qui tourne longtemps <strong>va</strong> échouer : timeout d'API, outil qui plante, machine qui redémarre, boucle infinie. L'orchestration mûre suppose des reprises, des points de sauvegarde, des limites de tentatives et des <em>garde-fous</em>. Sans ça, une panne à l'étape 8 fait tout recommencer — ou pire, laisse un état à moitié écrit.</p>
+          <p><strong>La question :</strong> que se passe-t-il si un agent meurt en plein milieu ?</p>
+          <div class="tools">
+            <span class="toolchip">reprise sur checkpoint</span><span class="toolchip">files d'attente (retry)</span><span class="toolchip">Temporal</span><span class="toolchip">idempotence</span><span class="toolchip">timeouts & limites de boucles</span>
+          </div>
+        </div>
+
+        <div class="lvl">
+          <h4>Savoir ce que font les agents (observabilité)</h4>
+          <p class="muted">Le niveau le plus sous-estimé. Plusieurs agents en parallèle = une boîte noire, si on ne trace rien. Il faut voir <strong>chaque étape</strong> : quel outil appelé, avec quels arguments, quel résultat, combien de tokens, quel coût. C'est ce qui rend le multi-agent <em>pilotable</em> plutôt que magique.</p>
+          <p><strong>La question :</strong> puis-je expliquer, après coup, pourquoi l'agent a fait ce qu'il a fait ?</p>
+          <div class="tools">
+            <span class="toolchip">traces / logs structurés</span><span class="toolchip">LangSmith</span><span class="toolchip">Langfuse</span><span class="toolchip">OpenTelemetry</span><span class="toolchip">tableaux de coût/tokens</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="note">
+        <span class="t">À retenir</span>
+        Les trois premiers niveaux répondent à « comment faire agir et collaborer les agents ». Les trois derniers — pannes, observabilité, et le choix code/no-code — décident si votre système est <strong>tenable en vrai</strong>. Beaucoup de démos s'arrêtent au niveau 2 ; la production commence au niveau 5.
+      </div>
+    </section>
+
+    <!-- ===================== 4 — CE QUI VA RESTER ===================== -->
+    <section id="reste">
+      <h2><span class="num">4</span>Ce qui restera structurel, au-delà des modèles</h2>
+      <p>Les modèles changent tous les mois. Certaines couches, elles, ne bougeront pas : ce sont les <strong>fondations physiques et de confiance</strong> sur lesquelles tout l'agentique repose. Investir sa compréhension là est plus durable que courir après le dernier modèle.</p>
+
+      <div class="grid c3">
+        <div class="card">
+          <h4>🖥️ L'infra physique des CPU/GPU</h4>
+          <p class="muted">Un agent, aussi malin soit-il, tourne sur du silicium réel : processeurs, mémoire, énergie, refroidissement, réseau. Cette couche matérielle est le vrai plafond — de vitesse, de coût, de souveraineté. Elle ne disparaît pas avec un meilleur modèle ; elle devient <strong>plus</strong> décisive.</p>
+        </div>
+        <div class="card">
+          <h4>🔗 La connexion entre agents</h4>
+          <p class="muted">Dès qu'il y a plus d'un agent, il faut une manière de <strong>se parler</strong> : formats de messages, protocoles, contrats d'interface. Peu importe le modèle derrière, deux agents ne collaborent que s'ils partagent un langage commun. Cette plomberie d'interconnexion est structurelle.</p>
+        </div>
+        <div class="card">
+          <h4>🔐 Le protocole cryptographique de communication</h4>
+          <p class="muted">Quand des agents autonomes échangent, engagent des actions, voire des valeurs, il faut prouver <strong>qui a dit quoi</strong> et que ça n'a pas été altéré. Signatures, identité, registres infalsifiables (type blockchain) : la couche de <strong>confiance vérifiable</strong> entre agents devient centrale, indépendamment du modèle.</p>
+        </div>
+      </div>
+
+      <div class="note">
+        <span class="t">L'idée de fond</span>
+        Le modèle est la partie qui se remplace le plus vite. Le matériel, l'interconnexion et la confiance cryptographique sont les parties qui <strong>durent</strong> — et donc là où se jouent les vraies dépendances stratégiques (fournisseurs de puces, standards de communication, infrastructures de confiance).
+      </div>
+    </section>
+
+    <!-- ===================== 5 — APPRIVOISER L'IA ===================== -->
+    <section id="apprivoiser">
+      <h2><span class="num">5</span>Aider chaque salarié à apprivoiser l'IA</h2>
+      <p>Le sujet technique masque le vrai sujet : <strong>les gens</strong>. Un déploiement d'IA échoue rarement pour des raisons de modèle ; il échoue parce que les salariés y voient une menace, ou ne savent pas quoi en faire.</p>
+
+      <h3>La problématique : remplacer ou augmenter ?</h3>
+      <div class="grid c2">
+        <div class="card">
+          <h4 style="color:var(--bad)">Remplacer — « l'IA fait à ta place »</h4>
+          <p class="muted">L'IA prend la tâche. Le salarié la subit, la surveille, ou la perd. Vécu comme une menace, ça déclenche résistance, désengagement, contournement. Et ça se retourne : on perd le savoir-faire qu'on croyait « automatiser ».</p>
+        </div>
+        <div class="card">
+          <h4 style="color:var(--good)">Augmenter — « l'IA améliore ton travail »</h4>
+          <p class="muted">L'IA enlève le répétitif et rend le salarié plus rapide, plus précis, capable de choses qu'il ne faisait pas seul. Le jugement, la décision, la responsabilité restent à lui. Vécu comme un levier, pas comme un remplaçant.</p>
+        </div>
+      </div>
+      <p>Le même outil peut servir les deux visées. Ce qui fait la différence, c'est <strong>l'intention du déploiement</strong> et la place laissée à l'humain. Le rôle du management n'est pas de choisir un outil, mais de choisir <em>de quel côté</em> on le met.</p>
+
+      <div class="note good">
+        <span class="t">L'idée directrice : avancer ensemble, en donnant des responsabilités</span>
+        Plutôt que « l'IA remplace des tâches », proposer : <strong>« chacun avance avec l'IA et gagne en responsabilité »</strong>. Le salarié qui délègue le répétitif à l'IA récupère du temps et du périmètre pour des décisions à plus forte valeur. On ne réduit pas le poste, on le <strong>fait monter d'un cran</strong>. C'est un contrat clair : l'IA prend le mécanique, l'humain prend la responsabilité.
+      </div>
+
+      <h4>En pratique, pour accompagner</h4>
+      <ul class="clean dot">
+        <li>Commencer par des cas <strong>sans enjeu</strong> (compréhension, brouillon, recherche) pour créer la confiance.</li>
+        <li>Nommer explicitement ce que l'IA <strong>ne</strong> fait pas : décider, valider, assumer.</li>
+        <li>Donner à chacun un vrai périmètre de responsabilité <em>au-dessus</em> de l'IA, pas <em>à côté</em>.</li>
+        <li>Valoriser ceux qui apprennent à bien s'en servir, sans stigmatiser ceux qui débutent.</li>
+      </ul>
+    </section>
+
+    <!-- ===================== 6 — FRONTIÈRES ENTRE POSTES ===================== -->
+    <section id="frontieres">
+      <h2><span class="num">6</span>L'IA brouille les frontières entre les postes</h2>
+      <p>Un effet moins discuté, mais profond : l'IA <strong>redistribue</strong> qui peut faire quoi. Les cloisons entre « celui qui code » et « celui qui ne code pas » deviennent poreuses, dans les deux sens.</p>
+
+      <div class="grid c2">
+        <div class="card">
+          <h4>Le non-codeur qui livre du logiciel</h4>
+          <p class="muted">Un profil métier, un designer, un chef de projet peut désormais <strong>« vibe coder »</strong> un site ou un outil interne sans écrire une ligne de code — en décrivant son intention à un agent. Des tâches qui exigeaient un développeur deviennent accessibles. La frontière « sait coder / ne sait pas coder » perd de sa netteté.</p>
+        </div>
+        <div class="card">
+          <h4>Ce qui compte n'est plus la syntaxe</h4>
+          <p class="muted">Écrire du code n'est plus le goulot d'étranglement. Ce qui fait la différence, c'est de savoir <strong>quoi</strong> demander et <strong>comment juger</strong> le résultat — c'est-à-dire les fondamentaux d'ingénierie, pas la maîtrise d'un langage.</p>
+        </div>
+      </div>
+
+      <div class="note">
+        <span class="t">Le retournement</span>
+        Quelqu'un qui <strong>maîtrise le TDD</strong> (donner à l'IA des tests comme critère de réussite) peut faire produire à un agent un meilleur code que beaucoup de développeurs professionnels qui codent « au feeling ». De même, quelqu'un qui <strong>connaît les principes d'architecture</strong> et sait les <em>énoncer</em> à une IA obtient des résultats structurés, là où un codeur chevronné mais sans cadre obtiendra du code qui marche mais ne tient pas.
+      </div>
+
+      <p>Autrement dit : la valeur se déplace de <strong>l'exécution</strong> (écrire les lignes) vers <strong>le cadrage et le jugement</strong> (quoi construire, quels tests, quelle architecture, quelle qualité on accepte). Ce sont des compétences transférables — ce qui explique pourquoi les frontières entre postes bougent autant.</p>
+    </section>
+
+    <!-- ===================== 7 — ERIC SADIN ===================== -->
+    <section id="sadin">
+      <h2><span class="num">7</span>Eric Sadin — la critique à ne pas esquiver</h2>
+      <p>Impossible de parler sérieusement d'IA au travail sans écouter ses critiques les plus tranchants. <strong>Éric Sadin</strong>, philosophe et essayiste français, est l'une des voix les plus radicales sur le sujet. On peut ne pas partager ses conclusions ; les ignorer serait naïf.</p>
+
+      <h3>Sa pensée, en résumé</h3>
+      <ul class="clean dot">
+        <li><strong>Un « antihumanisme radical ».</strong> Pour Sadin, l'IA n'est pas un simple outil : c'est une technologie qui prétend <em>dire le vrai</em> et <em>dicter la conduite</em> à notre place — elle « suggère », « recommande », « décide », et nous déchargeons peu à peu notre jugement sur elle.</li>
+        <li><strong>Des « technologies de l'injonction ».</strong> À force de nous dire quoi faire (quel trajet, quel achat, quelle formulation), ces systèmes érodent notre autonomie de décision et notre rapport singulier au monde.</li>
+        <li><strong>Le « désert de nous-mêmes ».</strong> En déléguant à la machine l'écriture, la création, la pensée, nous risquons de vider notre vie intérieure — la capacité même de nous <em>éprouver</em> comme êtres pensants et créateurs. C'est le cœur de son livre de 2025.</li>
+        <li><strong>Une critique politique et économique.</strong> Il vise le « technolibéralisme » : une industrie qui marchandise nos comportements et impose son tempo à la société, sans débat démocratique réel.</li>
+      </ul>
+
+      <div class="quote">
+        « L'enjeu n'est pas seulement ce que l'IA <em>fait</em>, mais ce qu'elle nous fait devenir — et ce qu'elle nous retire de la faculté de penser et d'agir par nous-mêmes. »
+        <br><span class="muted" style="font-style:normal">— synthèse de la position de Sadin (paraphrase)</span>
+      </div>
+
+      <h3>À lire / écouter</h3>
+      <div class="grid c2">
+        <div class="card">
+          <h4>Ses livres</h4>
+          <ul class="clean dot">
+            <li><strong>Le Désert de nous-mêmes : le tournant intellectuel et créatif de l'intelligence artificielle</strong>, L'Échappée, 2025.</li>
+            <li><strong>L'Intelligence artificielle ou l'enjeu du siècle : anatomie d'un antihumanisme radical</strong>, L'Échappée.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Vidéos</h4>
+          <ul class="clean dot">
+            <li><a class="inline" href="https://www.youtube.com/watch?v=R6M1sUzsZUk" target="_blank" rel="noopener">Entretien / conférence Éric Sadin (1)</a></li>
+            <li><a class="inline" href="https://www.youtube.com/watch?v=T4ofzhiEkmE" target="_blank" rel="noopener">Entretien / conférence Éric Sadin (2)</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note warn">
+        <span class="t">Pourquoi le citer ici</span>
+        Non pour clore le débat, mais pour tenir les deux bouts : d'un côté un outil qui <a href="#apprivoiser" class="inline">augmente</a> réellement le travail ; de l'autre le risque, bien réel, qu'il <strong>anesthésie le jugement</strong> qu'il est censé servir. Garder Sadin en tête, c'est se rappeler que « laisser l'IA faire » a un coût qui ne se lit pas sur une facture.
+      </div>
+
+    </section>
+
+    <!-- ===================== 8 — STRATÉGIE ===================== -->
+    <section id="strategie">
+      <h2><span class="num">8</span>Réflexion stratégique — toujours un coup d'avance</h2>
+      <p>Au-delà de la critique, savoir <strong>anticiper</strong> : où va l'IA, quels coups jouer, et comment garder l'initiative plutôt que de subir. L'idée directrice — <strong>toujours avoir un coup d'avance</strong>.</p>
+
+      <div class="card">
+        <h4>🎯 « Le SamourAI | IA & Stratégie »</h4>
+        <p class="muted">Une chaîne francophone qui analyse l'IA non pas comme une liste de gadgets, mais comme un <strong>système stratégique</strong> : les dynamiques invisibles (puissance de calcul, finance, géopolitique, marché du travail) qui déterminent qui gagne et qui perd. Anti-sensationnalisme, posture d'analyste plutôt que de chroniqueur de nouveautés — devise : <em>« L'IA, enfin claire. Votre coup d'avance. »</em> Elle ne commente pas le gadget de la semaine, mais le système qui le produit.</p>
+
+        <h4 style="margin-top:16px">4 axes de contenu</h4>
+        <ul class="clean dot">
+          <li><strong>Stratégie</strong> — qui détient la puissance de calcul et les modèles, positionnement concurrentiel.</li>
+          <li><strong>Carrière / travail</strong> — comment les emplois se redéfinissent et comment s'adapter structurellement.</li>
+          <li><strong>Finance</strong> — investissement, « suivre l'argent », géopolitique.</li>
+          <li><strong>Technologie</strong> — architecture, outils, méthodes d'implémentation et d'intégration.</li>
+        </ul>
+
+        <p class="muted" style="margin-top:14px"><strong>Pour qui :</strong> décideurs, stratèges, ingénieurs et professionnels qui raisonnent en années, pas en semaines. <strong>Ce que ce n'est pas :</strong> ni tutoriels, ni news de modèles — de la profondeur analytique plutôt que de la hype, pour anticiper carrière, investissements et décisions d'entreprise.</p>
+
+        <h4 style="margin-top:16px">Le type d'angles</h4>
+        <p class="muted">Plutôt que le modèle du jour, il déplace le regard : en <strong>stratégie</strong>, « vendre les pioches (Nvidia) rapporte plus que chercher l'or », ou pourquoi les géants acceptent de perdre de l'argent aujourd'hui. Côté <strong>carrière</strong>, « ce n'est pas l'IA qui prend ton job, c'est le collègue qui sait l'utiliser ». En <strong>finance & géopolitique</strong>, « suivre l'argent » et les vrais goulots — puce, énergie, data. Et sur la <strong>techno</strong>, pourquoi les entreprises échouent à déployer l'IA pour des raisons non techniques, ou si les agents sont une mode ou une vraie rupture.</p>
+        <p class="muted">Le fil rouge : la question que la plupart évitent — <strong>« ok, l'IA avance… mais concrètement, qu'est-ce que j'en fais »</strong> pour ma carrière, mes investissements, mes décisions.</p>
+
+        <div class="tools" style="margin-top:6px">
+          <span class="toolchip"><a class="inline" style="border:none" href="https://www.youtube.com/@SamouraiDansant" target="_blank" rel="noopener">YouTube</a></span>
+          <span class="toolchip">Podcast (Apple Podcasts)</span>
+          <span class="toolchip">Patreon (dès 17 €/mois)</span>
+          <span class="toolchip">Instagram @samourai_dansant</span>
+          <span class="toolchip">App DeepDialog</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 9 — JUNIORS ===================== -->
+    <section id="juniors">
+      <h2><span class="num">9</span>Former les juniors quand l'IA fait leur travail</h2>
+      <p>Un angle mort dangereux. Le travail des juniors — le répétitif, le boilerplate, les tâches simples — est précisément ce que l'IA absorbe le mieux. D'où une question qui n'a rien de théorique.</p>
+
+      <div class="note bad">
+        <span class="t">Le paradoxe de la relève</span>
+        Si l'IA fait le travail des juniors, <strong>par où passe-t-on pour devenir senior ?</strong> Un senior s'est formé <em>en faisant</em> le travail simple, en se trompant, en lisant beaucoup de code. Supprimez cette marche, et vous cassez l'escalier : plus de juniors formés aujourd'hui = <strong>plus de seniors demain</strong> pour relire, arbitrer, et rattraper les erreurs de l'IA. À terme, plus personne d'humain avec le recul suffisant derrière la machine.
+      </div>
+
+      <h3>L'enjeu, posé nettement</h3>
+      <ul class="clean dot">
+        <li>Le savoir-faire se construit par <strong>la pratique</strong>, pas par la supervision d'une machine.</li>
+        <li>Un junior qui ne fait que valider ce que l'IA produit n'apprend pas à <strong>juger</strong> — il apprend à faire confiance.</li>
+        <li>Sans nouveaux seniors, la couche humaine de contrôle au-dessus de l'IA s'amincit, alors qu'elle devient plus critique.</li>
+        <li>C'est un risque <strong>collectif et différé</strong> : invisible à court terme, structurel à 5-10 ans.</li>
+      </ul>
+
+      <h3>Pistes</h3>
+      <ul class="clean pro">
+        <li>Faire des juniors ceux qui <strong>pilotent et critiquent</strong> l'IA tôt — mais sur des bases qu'ils ont vraiment comprises (leur faire faire, puis comparer avec l'IA).</li>
+        <li>Préserver des espaces d'apprentissage « à la main », même moins efficaces, comme un investissement de formation assumé.</li>
+        <li>Muscler ce qui ne s'automatise pas : lecture critique, architecture, tests, débogage de ce que l'IA a raté.</li>
+      </ul>
+    </section>
+
+    <!-- ===================== 10 — SOCIÉTÉ & IA LOCALE ===================== -->
+    <section id="societe">
+      <h2><span class="num">10</span>Un enjeu de société — et la responsabilité des devs</h2>
+      <p>Tout ce qui précède déborde très largement le développement logiciel. Le déplacement du travail, de la formation, du jugement, touche la société entière. Et les développeurs y ont une <strong>responsabilité particulière</strong> : ce sont eux qui choisissent, construisent et déploient ces systèmes.</p>
+
+      <h3>Pourquoi l'IA locale apparaît comme une réponse</h3>
+      <div class="grid c2">
+        <div class="card">
+          <h4>💶 Plus soutenable économiquement</h4>
+          <p class="muted">Les coûts des modèles « frontières » (les plus gros, propriétaires) explosent : entraînement, inférence, dépendance à quelques fournisseurs. Une IA <strong>locale</strong>, tournant sur son propre matériel, transforme une rente à l'usage en investissement amorti — et sort de la spirale de coûts incontrôlés.</p>
+        </div>
+        <div class="card">
+          <h4>🗳️ Plus démocratique</h4>
+          <p class="muted">Une IA locale ne dépend pas d'un acteur unique qui fixe les prix, les règles et ce qui est permis. Elle garde la donnée chez soi, rend l'accès indépendant du bon vouloir d'une plateforme, et redonne du contrôle aux organisations et aux personnes. Une réponse concrète à la critique de <a href="#sadin" class="inline">Sadin</a> sur le technolibéralisme.</p>
+        </div>
+      </div>
+
+      <div class="note good">
+        <span class="t">La responsabilité côté dev</span>
+        Choisir une IA locale, ouverte, contrôlable, n'est pas qu'une décision technique de coût ou de confidentialité — c'est un <strong>choix de société</strong> : moins de dépendance, plus de souveraineté, une empreinte et une gouvernance qu'on peut assumer. Les développeurs ne sont pas neutres dans ce choix. Voir le guide <a class="inline" href="ia-locale-rag.html">IA locale & RAG on-premise</a>.
+      </div>
+    </section>
+
+    <!-- ===================== 11 — DIFFÉRENCE DES OUTILS ===================== -->
+    <section id="outils">
+      <h2><span class="num">11</span>La différence énorme entre les outils</h2>
+      <p>« Utiliser l'IA pour coder » ne veut rien dire tant qu'on n'a pas précisé <strong>quel</strong> outil. L'écart entre eux est colossal : ce ne sont pas des variantes d'un même produit, mais des <strong>catégories différentes</strong>, avec des puissances et des philosophies opposées.</p>
+
+      <div class="tablewrap">
+      <table>
+        <thead><tr><th style="width:20%">Outil</th><th>Nature</th><th>Ce qu'il fait vraiment</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>Copilot 365</strong></td>
+            <td><span class="pill blue">Assistant intégré</span></td>
+            <td>Un assistant greffé dans la suite bureautique (Word, Excel, Outlook, Teams). Il <strong>aide à produire des documents et des mails</strong>, résume, reformule. Précieux pour le travail de bureau — mais ce n'est pas un agent qui code et exécute dans un dépôt.</td>
+          </tr>
+          <tr>
+            <td><strong>GitHub Copilot</strong></td>
+            <td><span class="pill blue">Autocomplétion / chat</span></td>
+            <td>De l'<strong>autocomplétion de code</strong> dans l'éditeur + un chat. Il suggère la ligne ou le bloc suivant, répond à des questions. Très efficace pour accélérer la frappe, mais reste centré sur « t'aider pendant que <em>toi</em> tu codes ».</td>
+          </tr>
+          <tr>
+            <td><strong>Cursor</strong></td>
+            <td><span class="pill orange">Éditeur IA</span></td>
+            <td>Un éditeur (fork de VS Code) pensé autour de l'IA : édition multi-fichiers, compréhension du projet, mode agent intégré. Plus proche de l'agentique que Copilot, tout en restant dans un environnement d'édition.</td>
+          </tr>
+          <tr>
+            <td><strong>Claude Code</strong></td>
+            <td><span class="pill green">Agent</span></td>
+            <td>Un <strong>agent</strong> qui vit là où tu codes (terminal, IDE) : il lit le dépôt, modifie les fichiers, lance les commandes et <strong>boucle jusqu'au résultat</strong>. On ne l'assiste pas, on lui <strong>délègue</strong> une tâche et on relit le diff. C'est un changement de nature, pas de degré.</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="note">
+        <span class="t">Le point à faire passer</span>
+        Mettre « Copilot » et « Claude Code » dans la même phrase induit en erreur. L'un <strong>suggère pendant que tu écris</strong> ; l'autre <strong>fait et vérifie tout seul</strong> pendant que tu arbitres. Choisir son outil, c'est choisir son mode de travail — assistant, éditeur augmenté, ou vraie délégation agentique.
+      </div>
+    </section>
+
+    <!-- ===================== 12 — OUTILS POUR L'IA ===================== -->
+    <section id="pour-lia">
+      <h2><span class="num">12</span>Créer des outils <em>pour</em> l'IA vs rafistoler de vieux logiciels</h2>
+      <p>Dernière distinction, souvent invisible et pourtant déterminante. Quand on « branche un agent sur nos outils », il y a deux mondes très différents.</p>
+
+      <div class="grid c2">
+        <div class="card">
+          <h4 style="color:var(--good)">Concevoir des outils <em>pour</em> l'IA</h4>
+          <p class="muted">Des interfaces pensées dès le départ pour être appelées par un agent : contrats clairs, entrées/sorties structurées, erreurs explicites, opérations sûres et idempotentes. C'est l'esprit de <strong>MCP</strong> : exposer des capacités <em>faites pour</em> être orchestrées. L'agent est fiable parce que l'outil est fait pour lui.</p>
+          <ul class="clean pro">
+            <li>Actions atomiques, descriptibles en une phrase.</li>
+            <li>Sorties structurées, prévisibles, versionnées.</li>
+            <li>Erreurs lisibles par le modèle, garde-fous intégrés.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4 style="color:var(--warn)">Rafistoler un vieux logiciel</h4>
+          <p class="muted">Faire piloter par un agent une vieille application jamais prévue pour ça : cliquer dans une UI legacy, parser des sorties non structurées, contourner l'absence d'API. Ça <em>peut</em> marcher, mais c'est fragile, lent, et ça casse au moindre changement d'écran. On plaque de l'agentique sur un socle qui la refuse.</p>
+          <ul class="clean con">
+            <li>Interfaces instables, comportements implicites.</li>
+            <li>Aucune garantie, aucune reprise propre sur erreur.</li>
+            <li>Maintenance coûteuse à chaque évolution du legacy.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note">
+        <span class="t">La conséquence stratégique</span>
+        La vraie valeur ne vient pas de « brancher l'IA sur l'existant » à tout prix, mais de <strong>concevoir des capacités faites pour être orchestrées</strong>. Les organisations qui repensent leurs outils <em>pour</em> l'IA obtiendront des agents fiables ; celles qui se contentent de rafistoler auront des démos qui impressionnent et des systèmes qui cassent. C'est très différent — et ça se décide en amont.
+      </div>
+    </section>
+
+    <footer>
+      <p>Page compagnon de la présentation Claude Code — voir aussi <a class="inline" href="claude-code-presentation.html">la présentation agentique</a> et le guide <a class="inline" href="ia-locale-rag.html">IA locale & RAG</a>. Les liens externes (Sadin, Samouraï Dansant) sont des sources de réflexion, pas des recommandations exhaustives.</p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
