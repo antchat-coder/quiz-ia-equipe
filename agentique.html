@@ -149,8 +149,9 @@
     <a href="#outils"><span class="n">7</span>La différence des outils</a>
     <a href="#copilot-vs-rag"><span class="n">8</span>Copilot Studio vs RAG maison</a>
     <a href="#pour-lia"><span class="n">9</span>Outils POUR l'IA vs rafistolage</a>
-    <a href="#sadin"><span class="n">10</span>Eric Sadin — la critique</a>
-    <a href="#strategie"><span class="n">11</span>Réflexion stratégique</a>
+    <a href="#orchestration"><span class="n">10</span>Orchestrer des agents (outils)</a>
+    <a href="#sadin"><span class="n">11</span>Eric Sadin — la critique</a>
+    <a href="#strategie"><span class="n">12</span>Réflexion stratégique</a>
   </nav>
 
   <main>
@@ -175,6 +176,7 @@
           <tr><td><strong>Worktree</strong></td><td>Une copie de travail Git supplémentaire du même dépôt, sur une <strong>branche isolée</strong>. Permet à plusieurs agents de bosser en parallèle sans se marcher dessus.</td></tr>
           <tr><td><strong>Vibe coding</strong></td><td>Produire un logiciel en décrivant l'intention en langage naturel et en laissant l'IA écrire le code — sans forcément écrire une ligne soi-même.</td></tr>
           <tr><td><strong>TDD</strong></td><td><em>Test-Driven Development</em> — écrire le test <strong>avant</strong> le code. Donne à l'agent un critère objectif de réussite (le test passe ou non).</td></tr>
+          <tr><td><strong>SDD</strong></td><td><em>Spec-Driven Development</em> — piloter la production par une <strong>spécification</strong> claire (comportements attendus, règles de gestion, critères d'acceptation) plutôt que par le code. On écrit la spec, l'agent produit le code qui la satisfait : la spec devient le vrai livrable. Proche du <a href="#frontieres" class="inline">vibe coding</a>, mais cadré par un contrat explicite.</td></tr>
           <tr><td><strong>MCP</strong></td><td><em>Model Context Protocol</em> : un standard pour brancher un agent sur des outils externes (GitHub, base de données, monitoring…).</td></tr>
           <tr><td><strong>Harnais</strong></td><td>Le cadre de contrôle autour des agents : branches dédiées, tests obligatoires, pas de commit auto, relecture humaine. Il empêche l'« IA en roue libre ».</td></tr>
           <tr><td><strong>Augmenter vs remplacer</strong></td><td>Deux visées opposées de l'IA au travail : <strong>augmenter</strong> = rendre l'humain meilleur/plus rapide ; <strong>remplacer</strong> = faire à sa place. Le même outil peut servir les deux.</td></tr>
@@ -311,6 +313,9 @@ git worktree add ../recall-tests      test/upsert-unicite
         Quelqu'un qui <strong>maîtrise le TDD</strong> (donner à l'IA des tests comme critère de réussite) peut faire produire à un agent un meilleur code que beaucoup de développeurs professionnels qui codent « au feeling ». De même, quelqu'un qui <strong>connaît les principes d'architecture</strong> et sait les <em>énoncer</em> à une IA obtient des résultats structurés, là où un codeur chevronné mais sans cadre obtiendra du code qui marche mais ne tient pas.
       </div>
 
+      <h3>Exemple : un chef de projet fonctionnel qui livre des évolutions</h3>
+      <p>Concret : un <strong>chef de projet fonctionnel</strong>, qui connaît le métier mais ne code pas, rédige une <strong>spécification précise</strong> d'une évolution — règles de gestion, cas limites, critères d'acceptation. Il la confie à un agent, qui produit le code, les tests et l'écran ; lui relit et affine la spec jusqu'à ce que le résultat colle. C'est le principe du <strong>SDD (Spec-Driven Development)</strong> : la <em>spec</em> devient le vrai livrable, le code en découle. Ce PM « vibe code » ainsi une évolution qu'il aurait autrefois dû faire chiffrer et planifier auprès d'une équipe dev — à condition de savoir énoncer clairement le <strong>quoi</strong> et de <strong>juger</strong> le résultat.</p>
+
       <p>Autrement dit : la valeur se déplace de <strong>l'exécution</strong> (écrire les lignes) vers <strong>le cadrage et le jugement</strong> (quoi construire, quels tests, quelle architecture, quelle qualité on accepte). Ce sont des compétences transférables — ce qui explique pourquoi les frontières entre postes bougent autant.</p>
     </section>
 
@@ -338,6 +343,18 @@ git worktree add ../recall-tests      test/upsert-unicite
         <li>Préserver des espaces d'apprentissage « à la main », même moins efficaces, comme un investissement de formation assumé.</li>
         <li>Muscler ce qui ne s'automatise pas : lecture critique, architecture, tests, débogage de ce que l'IA a raté.</li>
       </ul>
+
+      <h3>Un livre à mettre entre les mains des juniors</h3>
+      <div class="card">
+        <h4>📘 Anis Ayari — <em>Le superpouvoir de l'IA</em> <span class="muted" style="font-weight:400">(« maintenant tout le monde peut coder… et ça change tout ! », éd. First)</span></h4>
+        <p class="muted">Anis Ayari — chaîne <strong>Defend Intelligence</strong> (~430k abonnés), data scientist — défend une idée directement utile ici. Son propos n'est pas « l'IA remplace les devs », mais l'inverse : l'IA rend le code <strong>accessible à tous</strong>, et c'est justement pour ça qu'il faut apprendre à coder <em>avec</em> elle plutôt que de la subir.</p>
+        <ul class="clean dot">
+          <li><strong>Le code devient un enjeu de pouvoir, pas seulement de productivité.</strong> « Quand on ne comprend pas les systèmes qui organisent nos usages, d'autres décident à notre place. » Savoir coder, c'est garder la main.</li>
+          <li><strong>Coder avec l'IA = rester le pilote.</strong> L'IA est un formidable levier <em>à condition</em> de ne pas abandonner son jugement : comprendre ce qu'elle produit pour pouvoir le <strong>juger</strong>, pas l'avaler tel quel.</li>
+          <li><strong>« Savoir coder » change de sens.</strong> Moins la syntaxe, davantage la capacité à comprendre, cadrer et vérifier — exactement ce qui sépare un futur senior d'un simple valideur.</li>
+        </ul>
+        <p class="muted">Pour un junior, la conclusion n'est donc pas « l'IA fait mon travail, à quoi bon apprendre ? » mais « l'IA me donne un superpouvoir <em>si</em> je comprends ce que je lui fais faire ». C'est l'antidote concret au paradoxe de la relève exposé plus haut : on ne saute pas la marche de l'apprentissage, on la <strong>gravit avec l'IA</strong>.</p>
+      </div>
     </section>
 
     <!-- ===================== 10 — SOCIÉTÉ & IA LOCALE ===================== -->
@@ -480,9 +497,74 @@ git worktree add ../recall-tests      test/upsert-unicite
       </div>
     </section>
 
-    <!-- ===================== 7 — ERIC SADIN ===================== -->
+    <!-- ===================== 10 — ORCHESTRATION D'AGENTS ===================== -->
+    <section id="orchestration">
+      <h2><span class="num">10</span>Orchestrer des agents : de quoi parle-t-on, avec quels outils</h2>
+      <p>On a surtout parlé d'<em>un</em> agent qui code. L'<strong>orchestration</strong>, c'est l'étape d'après : faire collaborer <strong>plusieurs agents et plusieurs étapes</strong> vers un résultat — décider qui fait quoi, dans quel ordre, avec quelles données en entrée/sortie, quelles limites, et comment on récupère et <strong>vérifie</strong> chaque résultat.</p>
+
+      <h3>Ce que « orchestrer » veut dire concrètement</h3>
+      <ul class="clean dot">
+        <li><strong>Enchaîner</strong> : la sortie d'une étape devient l'entrée de la suivante (extraire → résumer → écrire → tester).</li>
+        <li><strong>Router</strong> : selon le résultat, prendre une branche ou une autre (si le test échoue, corriger et reboucler).</li>
+        <li><strong>Paralléliser</strong> puis <strong>rassembler</strong> : plusieurs agents travaillent en même temps, un dernier agrège.</li>
+        <li><strong>Superviser</strong> : tracer chaque étape, mesurer coût et qualité, garder un point de contrôle humain.</li>
+      </ul>
+
+      <h3>Deux familles d'orchestration</h3>
+      <div class="grid c2">
+        <div class="card">
+          <h4>Orchestration « dans le code »</h4>
+          <p class="muted">Au sein d'un projet de dev : un agent principal qui délègue à des <a href="#petit" class="inline">sub-agents</a>, chacun sur son <a href="#worktrees" class="inline">worktree</a>, branchés sur des outils via <strong>MCP</strong>. C'est l'agentique de Claude Code — code, tests, PR.</p>
+        </div>
+        <div class="card">
+          <h4>Orchestration « en workflow »</h4>
+          <p class="muted">Des plateformes qui assemblent des étapes LLM + services (emails, bases, API métier) dans un graphe explicite. On y construit des assistants et des automatisations qui dépassent le seul dépôt de code.</p>
+        </div>
+      </div>
+
+      <h3>Les outils du marché</h3>
+      <div class="tablewrap">
+      <table>
+        <thead><tr><th style="width:20%">Outil</th><th>Nature</th><th>À quoi ça sert</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>n8n</strong></td>
+            <td><span class="pill blue">Workflow low-code</span></td>
+            <td>Automatisation visuelle (des nœuds qu'on relie) : brancher des LLM, des API, des bases et des déclencheurs sans (ou avec peu de) code. Idéal pour des <strong>automatisations métier</strong> et des agents « outillés » accessibles à des profils non-devs.</td>
+          </tr>
+          <tr>
+            <td><strong>LangChain</strong></td>
+            <td><span class="pill orange">Framework</span></td>
+            <td>Boîte à outils (Python/JS) pour construire des applications LLM : chaînes de prompts, connexion aux données, outils, mémoire. La brique de base pour <strong>assembler</strong> un pipeline sur-mesure.</td>
+          </tr>
+          <tr>
+            <td><strong>LangGraph</strong></td>
+            <td><span class="pill green">Orchestration à états</span></td>
+            <td>Décrit l'orchestration comme un <strong>graphe</strong> d'étapes avec état, boucles et branchements — le vrai contrôle de flux multi-agents (cycles, reprises, conditions). Pensé pour des agents fiables et durables.</td>
+          </tr>
+          <tr>
+            <td><strong>LangSmith</strong></td>
+            <td><span class="pill blue">Observabilité / éval</span></td>
+            <td>Traçage, débogage et <strong>évaluation</strong> des exécutions : voir chaque étape, mesurer coût/latence/qualité, comparer des versions. Le « monitoring » indispensable dès qu'on met de l'agentique en production.</td>
+          </tr>
+          <tr>
+            <td><strong>Autres</strong></td>
+            <td><span class="pill orange">Écosystème</span></td>
+            <td><strong>CrewAI</strong> et <strong>AutoGen</strong> (des équipes d'agents qui se répartissent des rôles), <strong>Semantic Kernel</strong> (côté .NET / Microsoft), <strong>Flowise</strong> et <strong>Dify</strong> (construction visuelle de flux LLM). Même idée, philosophies différentes.</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="note">
+        <span class="t">Le point à faire passer</span>
+        <strong>LangChain</strong> assemble, <strong>LangGraph</strong> orchestre (le flux et l'état), <strong>LangSmith</strong> observe et évalue, <strong>n8n</strong> ouvre l'orchestration aux profils non-devs. On choisit selon le besoin : un pipeline sur-mesure et contrôlé (LangChain / LangGraph + LangSmith) ou une automatisation rapide et visuelle (n8n). Dans tous les cas, l'orchestration ne remplace pas le <a href="#worktrees" class="inline">harnais</a> : elle le rend d'autant plus nécessaire.
+      </div>
+    </section>
+
+    <!-- ===================== 11 — ERIC SADIN ===================== -->
     <section id="sadin">
-      <h2><span class="num">10</span>Eric Sadin — la critique à ne pas esquiver</h2>
+      <h2><span class="num">11</span>Eric Sadin — la critique à ne pas esquiver</h2>
       <p>Impossible de parler sérieusement d'IA au travail sans écouter ses critiques les plus tranchants. <strong>Éric Sadin</strong>, philosophe et essayiste français, est l'une des voix les plus radicales sur le sujet. On peut ne pas partager ses conclusions ; les ignorer serait naïf.</p>
 
       <h3>Sa pensée, en résumé</h3>
@@ -525,7 +607,7 @@ git worktree add ../recall-tests      test/upsert-unicite
 
     <!-- ===================== 8 — STRATÉGIE ===================== -->
     <section id="strategie">
-      <h2><span class="num">11</span>Réflexion stratégique — toujours un coup d'avance</h2>
+      <h2><span class="num">12</span>Réflexion stratégique — toujours un coup d'avance</h2>
       <p>Au-delà de la critique, savoir <strong>anticiper</strong> : où va l'IA, quels coups jouer, et comment garder l'initiative plutôt que de subir. L'idée directrice — <strong>toujours avoir un coup d'avance</strong>.</p>
 
       <div class="card">
