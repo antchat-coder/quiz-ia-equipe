@@ -1,0 +1,22 @@
+# OS / éditeurs
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/
+
+# Node (si un jour tu ajoutes un build)
+node_modules/
+npm-debug.log*
+
+# Fichiers temporaires
+*.log
+backend/_check.js
+
+# --- Hors périmètre « site du quiz » (supports internes, non publiés) ---
+quizz-ia-form.gs
+quizz-ia-corrige.md
+notes-orateur.md
+wiki-recall.md
+claude-code-presentation.html
+ia-locale-rag.html
+recall-angular.html

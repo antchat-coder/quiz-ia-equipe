@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz — Niveau IA de l'équipe</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <h1 id="quiz-titre">Quiz — Niveau IA de l'équipe</h1>
+      <p id="quiz-sous-titre" class="sous-titre"></p>
+      <p id="quiz-intro" class="intro"></p>
+    </header>
+
+    <!-- Barre de progression -->
+    <div class="progress" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
+
+    <!-- Le formulaire est généré par js/app.js -->
+    <form id="quizForm" novalidate>
+      <div id="questions"></div>
+
+      <div id="erreurGlobale" class="erreur-globale" role="alert" hidden></div>
+
+      <div class="actions">
+        <button type="submit" id="submitBtn" class="btn-primary">Valider mes réponses</button>
+        <span id="submitState" class="submit-state" aria-live="polite"></span>
+      </div>
+    </form>
+
+    <!-- Écran de résultats (masqué au départ) -->
+    <section id="resultats" class="resultats" hidden aria-live="polite">
+      <div class="score-card">
+        <div class="score-num"><span id="scoreVal">0</span><span class="score-den">/ 20</span></div>
+        <div class="score-pct" id="scorePct">0 %</div>
+        <p class="score-msg" id="scoreMsg"></p>
+      </div>
+      <p id="confirmation" class="confirmation"></p>
+      <h2>Correction détaillée</h2>
+      <div id="correction" class="correction"></div>
+      <button type="button" id="restartBtn" class="btn-secondary">Refaire le quiz</button>
+    </section>
+
+    <footer class="footer">
+      <p>Réponses individuelles · le score s'affiche à la fin · vos réponses sont enregistrées pour l'équipe.</p>
+    </footer>
+  </main>
+
+  <script src="js/quiz-data.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
