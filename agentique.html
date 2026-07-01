@@ -142,16 +142,14 @@
     <a href="#lexique"><span class="n">§</span>Lexique</a>
     <a href="#petit"><span class="n">1</span>Commencer petit (3-4 agents)</a>
     <a href="#worktrees"><span class="n">2</span>GitHub worktrees</a>
-    <a href="#orchestration"><span class="n">3</span>Niveaux d'orchestration</a>
-    <a href="#reste"><span class="n">4</span>Ce qui va rester</a>
-    <a href="#apprivoiser"><span class="n">5</span>Apprivoiser l'IA</a>
-    <a href="#frontieres"><span class="n">6</span>Frontières entre postes</a>
-    <a href="#sadin"><span class="n">7</span>Eric Sadin — la critique</a>
-    <a href="#strategie"><span class="n">8</span>Réflexion stratégique</a>
-    <a href="#juniors"><span class="n">9</span>Former les juniors</a>
-    <a href="#societe"><span class="n">10</span>Enjeu de société & IA locale</a>
-    <a href="#outils"><span class="n">11</span>La différence des outils</a>
-    <a href="#pour-lia"><span class="n">12</span>Outils POUR l'IA vs rafistolage</a>
+    <a href="#apprivoiser"><span class="n">3</span>Apprivoiser l'IA</a>
+    <a href="#frontieres"><span class="n">4</span>Frontières entre postes</a>
+    <a href="#sadin"><span class="n">5</span>Eric Sadin — la critique</a>
+    <a href="#strategie"><span class="n">6</span>Réflexion stratégique</a>
+    <a href="#juniors"><span class="n">7</span>Former les juniors</a>
+    <a href="#societe"><span class="n">8</span>Enjeu de société & IA locale</a>
+    <a href="#outils"><span class="n">9</span>La différence des outils</a>
+    <a href="#pour-lia"><span class="n">10</span>Outils POUR l'IA vs rafistolage</a>
   </nav>
 
   <main>
@@ -159,7 +157,7 @@
     <header class="hero">
       <span class="tagline">Orchestration · usages · enjeux</span>
       <h1>L'<span>agentique</span> : faire travailler des agents,<br>et faire travailler les humains <em>avec</em> eux</h1>
-      <p class="lead">Passer d'un agent isolé à plusieurs agents qui collaborent, sans se noyer. Les niveaux d'orchestration et les outils qui les servent, ce qui restera structurel quoi qu'il arrive — puis la vraie question : comment chaque salarié apprivoise l'IA sans se faire remplacer, et pourquoi cet enjeu dépasse largement le code.</p>
+      <p class="lead">Passer d'un agent isolé à plusieurs agents qui collaborent, sans se noyer. La vraie question : comment chaque salarié apprivoise l'IA sans se faire remplacer, et pourquoi cet enjeu dépasse largement le code.</p>
     </header>
 
     <!-- ===================== LEXIQUE ===================== -->
@@ -259,104 +257,9 @@ git worktree add ../recall-tests      test/upsert-unicite
       </div>
     </section>
 
-    <!-- ===================== 3 — NIVEAUX D'ORCHESTRATION ===================== -->
-    <section id="orchestration">
-      <h2><span class="num">3</span>Les niveaux d'orchestration (du plus simple au plus avancé)</h2>
-      <p>« Orchestrer des agents » n'est pas une seule chose. C'est une échelle. Chaque niveau répond à une question précise, et se sert d'outils différents. On peut lire cette échelle comme une progression : on ne monte qu'une fois le niveau précédent maîtrisé.</p>
-
-      <div class="levels">
-
-        <div class="lvl">
-          <h4>Le chemin système — donner à l'agent l'accès au monde réel</h4>
-          <p class="muted">Le socle. Un agent n'est utile que branché sur un vrai environnement : système de fichiers, terminal, réseau, outils du projet. C'est le « chemin » par lequel il lit et agit. Sans lui, on a un chatbot ; avec lui, un agent.</p>
-          <p><strong>La question :</strong> qu'est-ce que l'agent a le droit de lire, d'exécuter, d'atteindre ?</p>
-          <div class="tools">
-            <span class="toolchip">shell / terminal</span><span class="toolchip">accès fichiers</span><span class="toolchip">Claude Code</span><span class="toolchip">Codex CLI</span><span class="toolchip">MCP (outils externes)</span>
-          </div>
-        </div>
-
-        <div class="lvl">
-          <h4>Faire collaborer plusieurs agents</h4>
-          <p class="muted">Découper une grosse tâche entre agents spécialisés qui se passent des résultats : un explore, un code, un relit. Un agent « chef » coordonne et agrège. C'est ici que <a href="#worktrees" class="inline">les worktrees</a> et la règle des <a href="#petit" class="inline">3-4 agents</a> comptent le plus.</p>
-          <p><strong>La question :</strong> qui fait quoi, dans quel ordre, et comment on recolle les morceaux ?</p>
-          <div class="tools">
-            <span class="toolchip">sub-agents</span><span class="toolchip">agent « orchestrateur »</span><span class="toolchip">LangGraph</span><span class="toolchip">CrewAI</span><span class="toolchip">AutoGen</span><span class="toolchip">OpenAI Agents SDK</span>
-          </div>
-        </div>
-
-        <div class="lvl">
-          <h4>Construire au plus près du modèle</h4>
-          <p class="muted">Descendre d'un cran : au lieu d'assembler des briques toutes faites, on pilote directement le modèle et ses appels d'outils. Plus de contrôle sur le prompt, le format, la boucle, le coût — au prix de plus de code. Pour les cas où les frameworks « clé en main » sont trop rigides.</p>
-          <p><strong>La question :</strong> ai-je besoin d'un contrôle fin de la boucle, ou une abstraction suffit ?</p>
-          <div class="tools">
-            <span class="toolchip">Claude Agent SDK</span><span class="toolchip">API tool-use</span><span class="toolchip">appels bruts au modèle</span><span class="toolchip">llama.cpp / serveur local</span>
-          </div>
-        </div>
-
-        <div class="lvl">
-          <h4>Orchestrer sans code (low-code / no-code)</h4>
-          <p class="muted">À l'inverse : assembler des workflows d'agents visuellement, sans programmer. Pour prototyper vite, ou pour donner l'orchestration à des profils non-développeurs (métier, chef de projet). Puissant pour connecter des services entre eux.</p>
-          <p><strong>La question :</strong> qui va construire et maintenir le workflow — un dev, ou une équipe métier ?</p>
-          <div class="tools">
-            <span class="toolchip">n8n</span><span class="toolchip">Make</span><span class="toolchip">Zapier</span><span class="toolchip">Flowise</span><span class="toolchip">Dify</span><span class="toolchip">Langflow</span>
-          </div>
-        </div>
-
-        <div class="lvl">
-          <h4>Survivre aux pannes</h4>
-          <p class="muted">Un agent qui tourne longtemps <strong>va</strong> échouer : timeout d'API, outil qui plante, machine qui redémarre, boucle infinie. L'orchestration mûre suppose des reprises, des points de sauvegarde, des limites de tentatives et des <em>garde-fous</em>. Sans ça, une panne à l'étape 8 fait tout recommencer — ou pire, laisse un état à moitié écrit.</p>
-          <p><strong>La question :</strong> que se passe-t-il si un agent meurt en plein milieu ?</p>
-          <div class="tools">
-            <span class="toolchip">reprise sur checkpoint</span><span class="toolchip">files d'attente (retry)</span><span class="toolchip">Temporal</span><span class="toolchip">idempotence</span><span class="toolchip">timeouts & limites de boucles</span>
-          </div>
-        </div>
-
-        <div class="lvl">
-          <h4>Savoir ce que font les agents (observabilité)</h4>
-          <p class="muted">Le niveau le plus sous-estimé. Plusieurs agents en parallèle = une boîte noire, si on ne trace rien. Il faut voir <strong>chaque étape</strong> : quel outil appelé, avec quels arguments, quel résultat, combien de tokens, quel coût. C'est ce qui rend le multi-agent <em>pilotable</em> plutôt que magique.</p>
-          <p><strong>La question :</strong> puis-je expliquer, après coup, pourquoi l'agent a fait ce qu'il a fait ?</p>
-          <div class="tools">
-            <span class="toolchip">traces / logs structurés</span><span class="toolchip">LangSmith</span><span class="toolchip">Langfuse</span><span class="toolchip">OpenTelemetry</span><span class="toolchip">tableaux de coût/tokens</span>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="note">
-        <span class="t">À retenir</span>
-        Les trois premiers niveaux répondent à « comment faire agir et collaborer les agents ». Les trois derniers — pannes, observabilité, et le choix code/no-code — décident si votre système est <strong>tenable en vrai</strong>. Beaucoup de démos s'arrêtent au niveau 2 ; la production commence au niveau 5.
-      </div>
-    </section>
-
-    <!-- ===================== 4 — CE QUI VA RESTER ===================== -->
-    <section id="reste">
-      <h2><span class="num">4</span>Ce qui restera structurel, au-delà des modèles</h2>
-      <p>Les modèles changent tous les mois. Certaines couches, elles, ne bougeront pas : ce sont les <strong>fondations physiques et de confiance</strong> sur lesquelles tout l'agentique repose. Investir sa compréhension là est plus durable que courir après le dernier modèle.</p>
-
-      <div class="grid c3">
-        <div class="card">
-          <h4>🖥️ L'infra physique des CPU/GPU</h4>
-          <p class="muted">Un agent, aussi malin soit-il, tourne sur du silicium réel : processeurs, mémoire, énergie, refroidissement, réseau. Cette couche matérielle est le vrai plafond — de vitesse, de coût, de souveraineté. Elle ne disparaît pas avec un meilleur modèle ; elle devient <strong>plus</strong> décisive.</p>
-        </div>
-        <div class="card">
-          <h4>🔗 La connexion entre agents</h4>
-          <p class="muted">Dès qu'il y a plus d'un agent, il faut une manière de <strong>se parler</strong> : formats de messages, protocoles, contrats d'interface. Peu importe le modèle derrière, deux agents ne collaborent que s'ils partagent un langage commun. Cette plomberie d'interconnexion est structurelle.</p>
-        </div>
-        <div class="card">
-          <h4>🔐 Le protocole cryptographique de communication</h4>
-          <p class="muted">Quand des agents autonomes échangent, engagent des actions, voire des valeurs, il faut prouver <strong>qui a dit quoi</strong> et que ça n'a pas été altéré. Signatures, identité, registres infalsifiables (type blockchain) : la couche de <strong>confiance vérifiable</strong> entre agents devient centrale, indépendamment du modèle.</p>
-        </div>
-      </div>
-
-      <div class="note">
-        <span class="t">L'idée de fond</span>
-        Le modèle est la partie qui se remplace le plus vite. Le matériel, l'interconnexion et la confiance cryptographique sont les parties qui <strong>durent</strong> — et donc là où se jouent les vraies dépendances stratégiques (fournisseurs de puces, standards de communication, infrastructures de confiance).
-      </div>
-    </section>
-
     <!-- ===================== 5 — APPRIVOISER L'IA ===================== -->
     <section id="apprivoiser">
-      <h2><span class="num">5</span>Aider chaque salarié à apprivoiser l'IA</h2>
+      <h2><span class="num">3</span>Aider chaque salarié à apprivoiser l'IA</h2>
       <p>Le sujet technique masque le vrai sujet : <strong>les gens</strong>. Un déploiement d'IA échoue rarement pour des raisons de modèle ; il échoue parce que les salariés y voient une menace, ou ne savent pas quoi en faire.</p>
 
       <h3>La problématique : remplacer ou augmenter ?</h3>
@@ -388,7 +291,7 @@ git worktree add ../recall-tests      test/upsert-unicite
 
     <!-- ===================== 6 — FRONTIÈRES ENTRE POSTES ===================== -->
     <section id="frontieres">
-      <h2><span class="num">6</span>L'IA brouille les frontières entre les postes</h2>
+      <h2><span class="num">4</span>L'IA brouille les frontières entre les postes</h2>
       <p>Un effet moins discuté, mais profond : l'IA <strong>redistribue</strong> qui peut faire quoi. Les cloisons entre « celui qui code » et « celui qui ne code pas » deviennent poreuses, dans les deux sens.</p>
 
       <div class="grid c2">
@@ -412,7 +315,7 @@ git worktree add ../recall-tests      test/upsert-unicite
 
     <!-- ===================== 7 — ERIC SADIN ===================== -->
     <section id="sadin">
-      <h2><span class="num">7</span>Eric Sadin — la critique à ne pas esquiver</h2>
+      <h2><span class="num">5</span>Eric Sadin — la critique à ne pas esquiver</h2>
       <p>Impossible de parler sérieusement d'IA au travail sans écouter ses critiques les plus tranchants. <strong>Éric Sadin</strong>, philosophe et essayiste français, est l'une des voix les plus radicales sur le sujet. On peut ne pas partager ses conclusions ; les ignorer serait naïf.</p>
 
       <h3>Sa pensée, en résumé</h3>
@@ -455,7 +358,7 @@ git worktree add ../recall-tests      test/upsert-unicite
 
     <!-- ===================== 8 — STRATÉGIE ===================== -->
     <section id="strategie">
-      <h2><span class="num">8</span>Réflexion stratégique — toujours un coup d'avance</h2>
+      <h2><span class="num">6</span>Réflexion stratégique — toujours un coup d'avance</h2>
       <p>Au-delà de la critique, savoir <strong>anticiper</strong> : où va l'IA, quels coups jouer, et comment garder l'initiative plutôt que de subir. L'idée directrice — <strong>toujours avoir un coup d'avance</strong>.</p>
 
       <div class="card">
@@ -488,7 +391,7 @@ git worktree add ../recall-tests      test/upsert-unicite
 
     <!-- ===================== 9 — JUNIORS ===================== -->
     <section id="juniors">
-      <h2><span class="num">9</span>Former les juniors quand l'IA fait leur travail</h2>
+      <h2><span class="num">7</span>Former les juniors quand l'IA fait leur travail</h2>
       <p>Un angle mort dangereux. Le travail des juniors — le répétitif, le boilerplate, les tâches simples — est précisément ce que l'IA absorbe le mieux. D'où une question qui n'a rien de théorique.</p>
 
       <div class="note bad">
@@ -514,7 +417,7 @@ git worktree add ../recall-tests      test/upsert-unicite
 
     <!-- ===================== 10 — SOCIÉTÉ & IA LOCALE ===================== -->
     <section id="societe">
-      <h2><span class="num">10</span>Un enjeu de société — et la responsabilité des devs</h2>
+      <h2><span class="num">8</span>Un enjeu de société — et la responsabilité des devs</h2>
       <p>Tout ce qui précède déborde très largement le développement logiciel. Le déplacement du travail, de la formation, du jugement, touche la société entière. Et les développeurs y ont une <strong>responsabilité particulière</strong> : ce sont eux qui choisissent, construisent et déploient ces systèmes.</p>
 
       <h3>Pourquoi l'IA locale apparaît comme une réponse</h3>
@@ -537,7 +440,7 @@ git worktree add ../recall-tests      test/upsert-unicite
 
     <!-- ===================== 11 — DIFFÉRENCE DES OUTILS ===================== -->
     <section id="outils">
-      <h2><span class="num">11</span>La différence énorme entre les outils</h2>
+      <h2><span class="num">9</span>La différence énorme entre les outils</h2>
       <p>« Utiliser l'IA pour coder » ne veut rien dire tant qu'on n'a pas précisé <strong>quel</strong> outil. L'écart entre eux est colossal : ce ne sont pas des variantes d'un même produit, mais des <strong>catégories différentes</strong>, avec des puissances et des philosophies opposées.</p>
 
       <div class="tablewrap">
@@ -576,7 +479,7 @@ git worktree add ../recall-tests      test/upsert-unicite
 
     <!-- ===================== 12 — OUTILS POUR L'IA ===================== -->
     <section id="pour-lia">
-      <h2><span class="num">12</span>Créer des outils <em>pour</em> l'IA vs rafistoler de vieux logiciels</h2>
+      <h2><span class="num">10</span>Créer des outils <em>pour</em> l'IA vs rafistoler de vieux logiciels</h2>
       <p>Dernière distinction, souvent invisible et pourtant déterminante. Quand on « branche un agent sur nos outils », il y a deux mondes très différents.</p>
 
       <div class="grid c2">
