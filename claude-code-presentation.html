@@ -59,7 +59,7 @@
   table{border-collapse:collapse; margin-top:12px; width:100%}
   td,th{border:1px solid var(--border); padding:9px 12px; text-align:left; font-size:clamp(13px,1.3vw,17px)}
   th{background:var(--panel); color:var(--accent)}
-  .hint{position:fixed; bottom:14px; left:50%; transform:translateX(-50%); color:var(--muted); font-size:12px}
+  .hint{position:fixed; bottom:58px; left:50%; transform:translateX(-50%); color:var(--muted); font-size:12px}
   .num{color:var(--accent); font-weight:700; font-size:clamp(26px,3vw,40px); margin-right:10px}
   a{color:var(--accent2)}
 </style>
@@ -72,11 +72,11 @@
   <a href="claude-code-presentation.html" aria-current="page">Claude Code</a>
 </nav>
 <style>
-.xnav{position:fixed;top:14px;right:14px;z-index:99999;display:flex;gap:6px;padding:6px 8px;background:rgba(20,20,25,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);border-radius:999px;font:500 13px/1 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.xnav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;gap:6px;padding:6px 8px;background:rgba(20,20,25,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);border-radius:999px;font:500 13px/1 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.35)}
 .xnav a{color:#dfe3ea;text-decoration:none;padding:6px 12px;border-radius:999px;white-space:nowrap}
 .xnav a:hover{background:rgba(255,255,255,.12);color:#fff}
 .xnav a[aria-current="page"]{background:#6c5ce7;color:#fff}
-@media(max-width:560px){.xnav{font-size:12px;flex-wrap:wrap;justify-content:flex-end;top:8px;right:8px;max-width:94vw}}
+@media(max-width:560px){.xnav{font-size:12px;flex-wrap:wrap;justify-content:center;bottom:8px;max-width:94vw}}
 </style>
 <div class="bar" id="bar"></div>
 <div id="deck">
