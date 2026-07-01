@@ -10,5 +10,5 @@
  */
 window.CONFIG = {
   // Colle ici l'URL qui se termine par /exec :
-  ENDPOINT_URL: "https://script.google.com/macros/s/AKfycbzIFA5RtnivvRwOTLhUSr0x6yykUbDZ32oOj6RZnvZVW4yd42qe92n7GWEkz0oaeqjuSg/exec"
+  ENDPOINT_URL: "https://script.google.com/macros/s/AKfycbwrMuAYsUlJW25lS4XwTPCcyhbRhr-uXuo8rKPKLF-2iParhRywQSrnPfGy2d3WhF6lhg/exec"
 };
