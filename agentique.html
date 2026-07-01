@@ -147,9 +147,10 @@
     <a href="#juniors"><span class="n">5</span>Former les juniors</a>
     <a href="#societe"><span class="n">6</span>Enjeu de société & IA locale</a>
     <a href="#outils"><span class="n">7</span>La différence des outils</a>
-    <a href="#pour-lia"><span class="n">8</span>Outils POUR l'IA vs rafistolage</a>
-    <a href="#sadin"><span class="n">9</span>Eric Sadin — la critique</a>
-    <a href="#strategie"><span class="n">10</span>Réflexion stratégique</a>
+    <a href="#copilot-vs-rag"><span class="n">8</span>Copilot Studio vs RAG maison</a>
+    <a href="#pour-lia"><span class="n">9</span>Outils POUR l'IA vs rafistolage</a>
+    <a href="#sadin"><span class="n">10</span>Eric Sadin — la critique</a>
+    <a href="#strategie"><span class="n">11</span>Réflexion stratégique</a>
   </nav>
 
   <main>
@@ -401,9 +402,55 @@ git worktree add ../recall-tests      test/upsert-unicite
       </div>
     </section>
 
-    <!-- ===================== 12 — OUTILS POUR L'IA ===================== -->
+    <!-- ===================== 8 — COPILOT STUDIO vs RAG MAISON ===================== -->
+    <section id="copilot-vs-rag">
+      <h2><span class="num">8</span>Copilot Studio vs RAG maison : deux façons de faire de l'agentique</h2>
+      <p>Même logique pour construire un assistant qui interroge <em>tes</em> données : soit une plateforme clé en main, soit un pipeline sur-mesure. Ce ne sont pas deux versions d'un même produit, mais <strong>deux philosophies</strong> — vitesse contre contrôle.</p>
+
+      <div class="grid c2">
+        <div class="card">
+          <h4><span class="pill blue">Copilot Studio</span> low-code, clés en main</h4>
+          <p class="muted">Plateforme SaaS Microsoft : tu branches tes sources (SharePoint, sites, fichiers) via une interface graphique, et le RAG est <strong>géré automatiquement</strong> (indexation, découpage, recherche, appel au LLM Azure OpenAI).</p>
+          <ul class="clean pro">
+            <li>Rapidité : un assistant fonctionnel en quelques heures, sans coder.</li>
+            <li>Intégration native Microsoft 365 (Teams, SharePoint, Outlook).</li>
+            <li>Maintenance, scalabilité et sécurité déléguées au tenant Azure.</li>
+            <li>Accessible à des profils non-développeurs.</li>
+          </ul>
+          <ul class="clean con">
+            <li>Boîte noire : peu de contrôle sur le chunking, l'embedding, le ranking.</li>
+            <li>Lock-in Microsoft : LLM imposé, sortie difficile.</li>
+            <li>Coût qui grimpe avec le volume ; personnalisation limitée.</li>
+            <li>Données qui transitent par le cloud Microsoft.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4><span class="pill green">RAG maison</span> code, sur-mesure</h4>
+          <p class="muted">Tu construis toi-même le pipeline : découpage, modèle d'embedding, base vectorielle (pgvector, Qdrant, Chroma…), recherche, re-ranking, et le LLM de ton choix (ex. Claude).</p>
+          <ul class="clean pro">
+            <li>Contrôle total : chaque brique optimisable pour la qualité.</li>
+            <li>Liberté du LLM ; possibilité d'en changer.</li>
+            <li>Confidentialité maîtrisée, jusqu'à l'on-premise / cloud souverain.</li>
+            <li>Coûts maîtrisables à grande échelle ; sur-mesure métier.</li>
+          </ul>
+          <ul class="clean con">
+            <li>Temps de développement et compétences techniques requises.</li>
+            <li>Infra, monitoring, mises à jour et sécurité à ta charge.</li>
+            <li>Time-to-market plus long ; risque de dette technique.</li>
+            <li>Évaluation de la qualité à mener en continu.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note">
+        <span class="t">Le point à faire passer</span>
+        <strong>Copilot Studio</strong> = vitesse et simplicité, au prix du contrôle et de l'indépendance. <strong>RAG maison</strong> = puissance et souveraineté, au prix de l'effort et de la maintenance. On choisit selon deux critères : la <strong>sensibilité des données</strong> et le <strong>besoin de contrôle</strong> sur la qualité et les coûts.
+      </div>
+    </section>
+
+    <!-- ===================== 9 — OUTILS POUR L'IA ===================== -->
     <section id="pour-lia">
-      <h2><span class="num">8</span>Créer des outils <em>pour</em> l'IA vs rafistoler de vieux logiciels</h2>
+      <h2><span class="num">9</span>Créer des outils <em>pour</em> l'IA vs rafistoler de vieux logiciels</h2>
       <p>Dernière distinction, souvent invisible et pourtant déterminante. Quand on « branche un agent sur nos outils », il y a deux mondes très différents.</p>
 
       <div class="grid c2">
@@ -435,7 +482,7 @@ git worktree add ../recall-tests      test/upsert-unicite
 
     <!-- ===================== 7 — ERIC SADIN ===================== -->
     <section id="sadin">
-      <h2><span class="num">9</span>Eric Sadin — la critique à ne pas esquiver</h2>
+      <h2><span class="num">10</span>Eric Sadin — la critique à ne pas esquiver</h2>
       <p>Impossible de parler sérieusement d'IA au travail sans écouter ses critiques les plus tranchants. <strong>Éric Sadin</strong>, philosophe et essayiste français, est l'une des voix les plus radicales sur le sujet. On peut ne pas partager ses conclusions ; les ignorer serait naïf.</p>
 
       <h3>Sa pensée, en résumé</h3>
@@ -478,7 +525,7 @@ git worktree add ../recall-tests      test/upsert-unicite
 
     <!-- ===================== 8 — STRATÉGIE ===================== -->
     <section id="strategie">
-      <h2><span class="num">10</span>Réflexion stratégique — toujours un coup d'avance</h2>
+      <h2><span class="num">11</span>Réflexion stratégique — toujours un coup d'avance</h2>
       <p>Au-delà de la critique, savoir <strong>anticiper</strong> : où va l'IA, quels coups jouer, et comment garder l'initiative plutôt que de subir. L'idée directrice — <strong>toujours avoir un coup d'avance</strong>.</p>
 
       <div class="card">
