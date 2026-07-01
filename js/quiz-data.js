@@ -61,6 +61,7 @@ const QUIZ = {
         titre: "Pour chaque outil, quel est votre accès ?",
         lignes: ["ChatGPT (OpenAI)", "Claude (Anthropic)", "GitHub Copilot",
                  "Google Gemini", "Mistral / Le Chat", "Perplexity",
+                 "Mammouth (mammouth.ai)",
                  "Cursor / Windsurf (IDE IA)", "Un LLM local (Ollama / LM Studio…)"],
         colonnes: ["Version gratuite", "Payé perso (perso)",
                    "Payé / fourni par l'entreprise (pro)", "Je n'utilise pas"] },
